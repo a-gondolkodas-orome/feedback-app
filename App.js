@@ -48,7 +48,7 @@ export default class App extends React.Component {
     if (this.state.isShowingQuestion) {
       return (
         <View style={styles.container}>
-          <Question />
+          <Question questionObject={this.state.questionDocSnap} />
         </View>
       );
     }

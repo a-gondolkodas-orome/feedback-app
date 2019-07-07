@@ -6,47 +6,17 @@ import '@firebase/firestore';
 
 
 
-if (false) {
-  db.collection("/events/alkototabor-20190706/questions/hogyvagy/answers").add({
-      answer: "3",
-      email: "pitukgabor@gmail.com",
-      name: "PGabor",
-      timestamp: new Date()
-  })
-  .then(function(docRef) {
-      console.log("Document written with ID: ", docRef.id);
-  })
-  .catch(function(error) {
-      console.error("Error adding document: ", error);
-  });
-}
-
-
 
 var email = "pitukgabor@gmail.com";
 var name = "PGabor";
 
 
-var submitAnswer = function(questionPath, answer) {
-  
-  const db = firebase.firestore();
-  db.collection(questionPath).add({
-    answer: answer,
-    email: email,
-    name: name,
-    timestamp: new Date()
-  })
-  .then(function(docRef) {
-      console.log("Document written with ID: ", docRef.id);
-  })
-  .catch(function(error) {
-      console.error("Error adding document: ", error);
-  });
-};
 
 
 
 class Scale5 extends React.Component {
+
+// props: `question`: reference to Question component
 
   constructor(props) {
     super(props);
@@ -56,7 +26,7 @@ class Scale5 extends React.Component {
 
     var buttons=[];
     for (i=1; i<=5; i++) {
-      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()}/>);
+      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
     }
 
     return (
@@ -70,6 +40,8 @@ class Scale5 extends React.Component {
 
 class Scale10 extends React.Component {
 
+// props: `question`: reference to Question component
+
   constructor(props) {
     super(props);
   }
@@ -78,7 +50,7 @@ class Scale10 extends React.Component {
 
     var buttons=[];
     for (i=1; i<=10; i++) {
-      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} radius={25} />);
+      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
     }
 
     return (
@@ -93,13 +65,17 @@ class Scale10 extends React.Component {
 
 class CircularButtonForScaleAnswer extends React.Component {
 
+// props: `question`: reference to Question component
+
+
   constructor(props) {
     super(props);
-    this.questionPath = "/events/alkototabor-20190706/questions/hogyvagy/answers";
+//    this.questionPath = "/events/alkototabor-20190706/questions/hogyvagy/answers";
   }
 
-  onPress(answer) {
-    submitAnswer(questionPath, answer);
+  onPress = function() {
+    console.log("Button pressed, sending answer: ", this.props.title);
+    submitAnswer(this.props.title);
   }
 
   render() {
@@ -107,10 +83,7 @@ class CircularButtonForScaleAnswer extends React.Component {
       <TouchableOpacity
         title={this.props.title}
         style={question_styles.circular_button}
-        onPress={() => {
-          console.log(this.props.title);
-          submitAnswer(this.questionPath, this.props.title);
-        }}
+        onPress={() => this.props.question.submitAnswer(this.props.title)}
       >
         <Text style={{color:'#000'}}>{this.props.title}</Text>
       </TouchableOpacity>
@@ -121,31 +94,48 @@ class CircularButtonForScaleAnswer extends React.Component {
 
 
 
+// <Question questionObject={QueryDocumentSnapshot} />
 
 export class Question extends React.Component {
+
+//  props: `questionObject`: firebase QueryDocumentSnapshot object
+
   constructor(props) {
     super(props);
-    this.state = {
-      answer: ''
-    };
+    this.questionObjectData = this.props.questionObject.data();
   }
 
-  saveAnswer = (text) => {
-    this.setState({answer: text})
-  }
+  submitAnswer(answer) {
 
-  submitAnswer = (event) => {
-    console.log("Sending answer to server.")
-  }
+    this.props.questionObject.ref.collection('answers').add({
+      answer: answer,
+      email: email,
+      name: name,
+      timestamp: new Date()
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+  };
 
   render() {
-//    console.log(this.state);
-    return (
-      <View style={question_styles.container} >
-        <Text style={question_styles.question_text} >{this.props.question}</Text>
-        <Scale5/>
-      </View>
-    )
+    if (this.questionObjectData.type == "scale5") {
+      return (
+        <View style={question_styles.container} >
+          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
+          <Scale5 question={this} />
+        </View>
+      )
+    } else if (this.questionObjectData.type == "scale10") {
+      return (
+        <View style={question_styles.container} >
+          <Scale10 question={this} />
+        </View>
+      )
+    }
   }
 }
 
