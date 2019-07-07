@@ -80,13 +80,15 @@ export default class Welcome extends React.Component {
   }
 
   getQuestion(eventRef) {
+    var welcome = this;
     eventRef.collection("questions")
       .get()
       .then(function(querySnapshot) {
-        querySnapshot.forEach(function(doc) {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        });
+        if (querySnapshot.size == 0) {
+          console.log("Did not find questions for event: " + eventRef.path);
+          return;
+        }
+        welcome.props.showQuestion(querySnapshot.docs[0]);
       })
       .catch(function(error) {
         console.log("Error getting questions: ", error);

@@ -33,13 +33,28 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = { isShowingQuestion: false, questionDocSnap: null}
   }
 
+  showQuestion = (questionDocSnap) => {
+    console.log("Showing question: " + questionDocSnap.ref.path);
+    this.setState({
+      isShowingQuestion: true,
+      questionDocSnap: questionDocSnap
+    });
+  }
 
   render() {
+    if (this.state.isShowingQuestion) {
+      return (
+        <View style={styles.container}>
+          <Question />
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
-        <Welcome />
+        <Welcome showQuestion={this.showQuestion}/>
       </View>
     );
   }
