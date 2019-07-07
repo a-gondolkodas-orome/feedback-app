@@ -30,8 +30,14 @@ class WordCloud extends React.Component {
     }
 
     return (
-      <View style={question_styles.wordcloud_container} >
-        {wordComponents}
+      <View style = {{
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <View style={question_styles.wordcloud_container} >
+          {wordComponents}
+        </View>
       </View>
     )
 
@@ -80,8 +86,14 @@ class Scale5 extends React.Component {
     }
 
     return (
-      <View style = {question_styles.scale5_container} >
-        {buttons}
+      <View style = {{
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <View style = {question_styles.scale5_container} >
+          {buttons}
+        </View>
       </View>
     )
   }
@@ -98,14 +110,26 @@ class Scale10 extends React.Component {
 
   render() {
 
-    var buttons=[];
-    for (i=1; i<=10; i++) {
-      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
+    var buttons1=[], buttons2=[];
+    for (i=1; i<=5; i++) {
+      buttons1.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
+    }
+    for (i=6; i<=10; i++) {
+      buttons2.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
     }
 
     return (
-      <View style = {question_styles.scale10_container} >
-        {buttons}
+      <View style = {{
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <View style = {question_styles.scale10_container} >
+          {buttons1}
+        </View>
+        <View style = {question_styles.scale10_container} >
+          {buttons2}
+        </View>
       </View>
     )
   }
@@ -163,33 +187,21 @@ export class Question extends React.Component {
   };
 
   render() {
+    var questionComponentForType = "<Text>Ismeretlen kérdéstípus</Text>";
     if (this.questionObjectData.type == "scale5") {
-      return (
-        <View style={question_styles.container} >
-          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
-          <Scale5 question={this} />
-        </View>
-      );
+      questionComponentForType = (<Scale5 question={this} />);
     } else if (this.questionObjectData.type == "scale10") {
-      return (
-        <View style={question_styles.container} >
-          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
-          <Scale10 question={this} />
-        </View>
-      )
+      questionComponentForType = (<Scale10 question={this} />);
     } else if (this.questionObjectData.type == "wordcloud") {
-      return (
-        <View style={question_styles.wordcloud_container} >
-          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
-          <WordCloud question={this} />
-        </View>
-      );
+      questionComponentForType = (<WordCloud question={this} />);
     }
+
     return (
-        <View style={question_styles.container} >
-          <Text style={question_styles.question_text} >Hiba: ismeretlen típusú kérdés</Text>
-        </View>
-    );
+      <View style={question_styles.container} >
+          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
+          {questionComponentForType}
+      </View>
+    )
   }
 }
 
@@ -231,21 +243,21 @@ const question_styles = StyleSheet.create({
     margin: 5,
   },
   wordcloud_container: {
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scale5_container: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 50,
   },
   scale10_container: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginTop: 5,
   },
 })
-
 
