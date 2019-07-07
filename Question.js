@@ -6,20 +6,6 @@ import '@firebase/firestore';
 
 
 
-
-// Initialize Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyDmshJPEN5RyoQB5HI9f6vf4Ys7dn8Gkkw",
-  projectId: "feedback-app-ago",
-  authDomain: "feedback-app-ago.firebaseapp.com",
-  databaseURL: "https://feedback-app-ago.firebaseio.com",
-  storageBucket: "feedback-app-ago.appspot.com"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-
 if (false) {
   db.collection("/events/alkototabor-20190706/questions/hogyvagy/answers").add({
       answer: "3",
@@ -42,6 +28,8 @@ var name = "PGabor";
 
 
 var submitAnswer = function(questionPath, answer) {
+  
+  const db = firebase.firestore();
   db.collection(questionPath).add({
     answer: answer,
     email: email,

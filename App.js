@@ -18,42 +18,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-class Question extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      answer: ''
-    };
-  }
-
-  saveAnswer = (text) => {
-    this.setState({answer: text})
-  }
-
-  submitAnswer = (event) => {
-    console.log("Sending answer to server.")
-  }
-
-  render() {
-    console.log(this.state);
-    return (
-      <>
-        <Text>{this.props.question}</Text>
-        <TextInput
-          placeholder="Válasz."
-          onChangeText = {this.saveAnswer}
-        />
-        <Button
-          title="ClickMe!"
-          onPress = {this.submitAnswer}
-        />
-
-        <Text>(A válaszod: this.state.answer)</Text>
-      </>
-    )
-  }
-}
-
 
 export default class App extends React.Component {
 
