@@ -92,7 +92,7 @@ export default class Welcome extends React.Component {
         }
         // Just show the first scale question.
         for (let i = 0; i < querySnapshot.size; i++){
-          if (querySnapshot.docs[i].data().type.startsWith("scale")) {
+          if (querySnapshot.docs[i].data().type.startsWith("word")) {
             welcome.props.showQuestion(querySnapshot.docs[i]);
           }
         }

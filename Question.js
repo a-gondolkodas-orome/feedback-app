@@ -22,7 +22,7 @@ class WordCloud extends React.Component {
     console.log(this.props.question.questionObjectData);
     for (wordId in this.props.question.questionObjectData.words) {
       wordComponents.push(
-        <CircularButtonForScaleAnswer key={i} title={this.props.question.questionObjectData.words[wordId]}
+        <WordButtonForWordCloudAnswer key={i} title={this.props.question.questionObjectData.words[wordId]}
           question={this.props.question}
         />
       );
@@ -36,6 +36,28 @@ class WordCloud extends React.Component {
     )
 
   }
+
+}
+
+
+class WordButtonForWordCloudAnswer extends React.Component {
+
+  render() {
+    return (
+      <TouchableOpacity
+        title={this.props.title}
+        style={question_styles.wordcloud_button}
+        onPress={() => this.props.question.submitAnswer(this.props.title)}
+      >
+        <Text style={{
+          color: '#000',
+          textAlign: 'center'
+        }}>
+        {this.props.title}</Text>
+      </TouchableOpacity>
+    )
+  }
+
 
 }
 
@@ -151,14 +173,15 @@ export class Question extends React.Component {
     } else if (this.questionObjectData.type == "scale10") {
       return (
         <View style={question_styles.container} >
+          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
           <Scale10 question={this} />
         </View>
       )
     } else if (this.questionObjectData.type == "wordcloud") {
       return (
-        <View style={question_styles.container} >
-          <WordCloud question={this} />
+        <View style={question_styles.wordcloud_container} >
           <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
+          <WordCloud question={this} />
         </View>
       );
     }
@@ -182,8 +205,10 @@ const question_styles = StyleSheet.create({
     fontSize: 24,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 50,
   },
   circular_button: {
+    flex: 1,
     borderWidth:1,
     borderColor:'rgba(0,0,0,0.2)',
     alignItems:'center',
@@ -194,11 +219,18 @@ const question_styles = StyleSheet.create({
     borderRadius: 20,
     margin: 5,
   },
+  wordcloud_button: {
+    borderWidth:1,
+    borderColor:'rgba(0,0,0,0.2)',
+    alignItems:'center',
+    justifyContent:'center',
+    width: 150,
+    padding: 8,
+    backgroundColor:'#fff',
+    borderRadius: 20,
+    margin: 5,
+  },
   wordcloud_container: {
-    position: 'absolute',
-    top: 400,
-    flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
