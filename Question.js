@@ -12,11 +12,42 @@ var name = "PGabor";
 
 
 
+class WordCloud extends React.Component {
+
+// props: `question`: reference to parent Question component
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+
+    var wordComponents=[];
+    var i=1;
+    console.log(this.props.question.questionObjectData);
+    for (wordId in this.props.question.questionObjectData.words) {
+      wordComponents.push(
+        <CircularButtonForScaleAnswer key={i} title={this.props.question.questionObjectData.words[wordId]}
+          question={this.props.question}
+        />
+      );
+      i++;
+    }
+
+    return (
+      <View style={question_styles.wordcloud_container} >
+        {wordComponents}
+      </View>
+    )
+
+  }
+
+}
 
 
 class Scale5 extends React.Component {
 
-// props: `question`: reference to Question component
+// props: `question`: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -26,7 +57,9 @@ class Scale5 extends React.Component {
 
     var buttons=[];
     for (i=1; i<=5; i++) {
-      buttons.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
+      buttons.push(
+        <CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />
+      );
     }
 
     return (
@@ -40,7 +73,7 @@ class Scale5 extends React.Component {
 
 class Scale10 extends React.Component {
 
-// props: `question`: reference to Question component
+// props: `question`: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -65,7 +98,7 @@ class Scale10 extends React.Component {
 
 class CircularButtonForScaleAnswer extends React.Component {
 
-// props: `question`: reference to Question component
+// props: `question`: reference to parent Question component
 
 
   constructor(props) {
@@ -135,6 +168,13 @@ export class Question extends React.Component {
           <Scale10 question={this} />
         </View>
       )
+    } else if (this.questionObjectData.type == "wordcloud") {
+      return (
+        <View style={question_styles.container} >
+          <WordCloud question={this} />
+          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
+        </View>
+      )
     }
   }
 }
@@ -164,6 +204,14 @@ const question_styles = StyleSheet.create({
     height: 40,
     backgroundColor:'#fff',
     borderRadius: 20,
+  },
+  wordcloud_container: {
+    position: 'absolute',
+    top: 400,
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   scale5_container: {
     position: 'absolute',

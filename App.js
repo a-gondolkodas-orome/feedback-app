@@ -54,7 +54,7 @@ export default class App extends React.Component {
     }
     return (
       <View style={styles.container}>
-        <Welcome showQuestion={this.showQuestion}/>
+        <Welcome showQuestion={this.showQuestion} />
       </View>
     );
   }
