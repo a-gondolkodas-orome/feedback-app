@@ -12,7 +12,6 @@ export default class Welcome extends React.Component {
     this.state = { name: "N Laci", code: "1337" };
   }
 
-
   render() {
     return (
       <View style={styles.container}>
@@ -70,16 +69,31 @@ export default class Welcome extends React.Component {
           welcome.codeTextInput.focus();
           return;
         }
-        console.log("Found event: ", querySnapshot.docs[0].id, " ", querySnapshot.docs[0].data());
-        // Next step: jump to the event.
+        console.log("Found event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
+        // Next step: jump to the event. For now we will just jump to a question of it.
+        welcome.getQuestion(querySnapshot.docs[0].ref);
       })
       .catch(function(error) {
         console.log("Error getting event: ", error);
         // TODO: display error
       });
   }
-}
 
+  getQuestion(eventRef) {
+    eventRef.collection("questions")
+      .get()
+      .then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+        });
+      })
+      .catch(function(error) {
+        console.log("Error getting questions: ", error);
+        // TODO: display error
+      });
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
