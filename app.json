@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Gabor's Test Project",
-    "slug": "test-project",
+    "name": "Feedback app",
+    "slug": "feedback-app",
     "privacy": "public",
     "sdkVersion": "33.0.0",
     "platforms": [
