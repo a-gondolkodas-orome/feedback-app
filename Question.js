@@ -160,6 +160,46 @@ class CircularButtonForScaleAnswer extends React.Component {
 }
 
 
+
+class TextBox extends React.Component {
+
+// props: `question`: reference to parent Question component
+  
+  constructor(props) {
+    super(props);
+    this.state = { answer: "" };
+  }
+
+  render() {
+    return (
+      <View style = {{
+        flex: 1,
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+        <View style={question_styles.textbox_container} >
+          <TextInput
+            style={question_styles.textbox}
+            placeholder="Rövid válasz."
+            multiline={true}
+            blurOnSubmit={true}
+            onChangeText={(text) => this.setState({answer: text})}
+            value={this.state.answer}
+          />
+        <TouchableOpacity
+          style={question_styles.textbox_button}
+          onPress={() => this.props.question.submitAnswer(this.state.answer)}
+        >
+          <Text style={{color:'#000'}}>Küld</Text>
+        </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+}
+
+
 export class Question extends React.Component {
 
 //  props: `questionObject`: firebase QueryDocumentSnapshot object
@@ -187,21 +227,22 @@ export class Question extends React.Component {
   };
 
   render() {
-    var questionComponentForType = "<Text>Ismeretlen kérdéstípus</Text>";
+    var questionComponentForType = (<Text>Ismeretlen kérdéstípus</Text>);
     if (this.questionObjectData.type == "scale5") {
       questionComponentForType = (<Scale5 question={this} />);
     } else if (this.questionObjectData.type == "scale10") {
       questionComponentForType = (<Scale10 question={this} />);
     } else if (this.questionObjectData.type == "wordcloud") {
       questionComponentForType = (<WordCloud question={this} />);
+    } else if (this.questionObjectData.type == "textbox") {
+      questionComponentForType = (<TextBox question={this} />);
     }
-
     return (
       <View style={question_styles.container} >
           <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
           {questionComponentForType}
       </View>
-    )
+    );
   }
 }
 
@@ -259,5 +300,32 @@ const question_styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 5,
   },
+  textbox_container: {
+//    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textbox: {
+//    flex: 1,
+    borderWidth: 1,
+    borderColor: 'black',
+    width: 300,
+    height: 80,
+    justifyContent: 'center',
+    padding: 8,
+    margin: 20,
+  },
+  textbox_button: {
+//    flex: 1,
+    borderWidth:1,
+    borderColor:'rgba(0,0,0,0.2)',
+    alignItems:'center',
+    justifyContent:'center',
+    width: 100,
+    height: 40,
+    backgroundColor:'#fff',
+    borderRadius: 20,
+    margin: 5,
+  }
 })
 
