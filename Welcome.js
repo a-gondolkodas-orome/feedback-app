@@ -55,6 +55,7 @@ export default class Welcome extends React.Component {
       this.codeTextInput.focus();
       return;
     }
+    this.props.setName(this.state.name);
 
     const db = firebase.firestore();
     var welcome = this;
@@ -70,6 +71,7 @@ export default class Welcome extends React.Component {
           return;
         }
         console.log("Found event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
+        welcome.props.setEvent(querySnapshot.docs[0]);
         // Next step: jump to the event. For now we will just jump to a question of it.
         welcome.getQuestion(querySnapshot.docs[0].ref);
       })
@@ -88,7 +90,13 @@ export default class Welcome extends React.Component {
           console.log("Did not find questions for event: " + eventRef.path);
           return;
         }
-        welcome.props.showQuestion(querySnapshot.docs[0]);
+        // Just show the first scale question.
+        for (let i = 0; i < querySnapshot.size; i++){
+          if (querySnapshot.docs[i].data().type.startsWith("scale")) {
+            welcome.props.showQuestion(querySnapshot.docs[i]);
+          }
+        }
+        
       })
       .catch(function(error) {
         console.log("Error getting questions: ", error);

@@ -6,13 +6,8 @@ import '@firebase/firestore';
 
 
 
-
-var email = "pitukgabor@gmail.com";
-var name = "PGabor";
-
-
-
-
+// var name = "P Gabor";
+// var email = "pitukgabor@gmail.com";
 
 class Scale5 extends React.Component {
 
@@ -67,15 +62,8 @@ class CircularButtonForScaleAnswer extends React.Component {
 
 // props: `question`: reference to Question component
 
-
   constructor(props) {
     super(props);
-//    this.questionPath = "/events/alkototabor-20190706/questions/hogyvagy/answers";
-  }
-
-  onPress = function() {
-    console.log("Button pressed, sending answer: ", this.props.title);
-    submitAnswer(this.props.title);
   }
 
   render() {
@@ -93,12 +81,10 @@ class CircularButtonForScaleAnswer extends React.Component {
 }
 
 
-
-// <Question questionObject={QueryDocumentSnapshot} />
-
 export class Question extends React.Component {
 
 //  props: `questionObject`: firebase QueryDocumentSnapshot object
+//          `name`: string, name of the user
 
   constructor(props) {
     super(props);
@@ -109,8 +95,8 @@ export class Question extends React.Component {
 
     this.props.questionObject.ref.collection('answers').add({
       answer: answer,
-      email: email,
-      name: name,
+      // email: email,
+      name: this.props.name,
       timestamp: new Date()
     })
     .then(function(docRef) {
@@ -128,14 +114,19 @@ export class Question extends React.Component {
           <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
           <Scale5 question={this} />
         </View>
-      )
+      );
     } else if (this.questionObjectData.type == "scale10") {
       return (
         <View style={question_styles.container} >
           <Scale10 question={this} />
         </View>
-      )
+      );
     }
+    return (
+        <View style={question_styles.container} >
+          <Text style={question_styles.question_text} >Hiba: ismeretlen típusú kérdés</Text>
+        </View>
+    );
   }
 }
 
@@ -147,15 +138,12 @@ const question_styles = StyleSheet.create({
     justifyContent: 'center',
   },
   question_text: {
-    position: 'absolute',
-    top: 100,
-    flex: 1,
-    fontSize: 20,
+    marginTop: 100,
+    fontSize: 24,
     alignItems: 'center',
     justifyContent: 'center',
   },
   circular_button: {
-    flex:1,
     borderWidth:1,
     borderColor:'rgba(0,0,0,0.2)',
     alignItems:'center',
@@ -164,18 +152,15 @@ const question_styles = StyleSheet.create({
     height: 40,
     backgroundColor:'#fff',
     borderRadius: 20,
+    margin: 5,
   },
   scale5_container: {
-    position: 'absolute',
-    top: 400,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   scale10_container: {
-    position: 'absolute',
-    top: 400,
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
