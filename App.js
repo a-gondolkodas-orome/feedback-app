@@ -33,7 +33,13 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { isShowingQuestion: false, questionDocSnap: null}
+    // TODO: probably we should use Redux instead of this.
+    this.state = {
+      isShowingQuestion: false,
+      questionDocSnap: null,
+      name: null,
+      eventDocSnap: null
+    }
   }
 
   showQuestion = (questionDocSnap) => {
@@ -44,17 +50,33 @@ export default class App extends React.Component {
     });
   }
 
+  setName = (name) => {
+    this.setState({ name: name });
+  }
+
+  setEvent = (eventDocSnap) => {
+    this.setState({ eventDocSnap: eventDocSnap });
+  }
+
   render() {
     if (this.state.isShowingQuestion) {
       return (
         <View style={styles.container}>
-          <Question questionObject={this.state.questionDocSnap} />
+          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.state.eventDocSnap.data().name}</Text>
+          <Question
+            questionObject={this.state.questionDocSnap}
+            name={this.state.name}
+          />
         </View>
       );
     }
     return (
       <View style={styles.container}>
-        <Welcome showQuestion={this.showQuestion} />
+        <Welcome
+          showQuestion={this.showQuestion}
+          setName={this.setName}
+          setEvent={this.setEvent}
+        />
       </View>
     );
   }
