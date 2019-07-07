@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View, Alert, Button } from 'react-native';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
+import Welcome from './Welcome'
 
 
 // Initialize Firebase
@@ -15,25 +16,6 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-
-
-db.collection("/events/alkototabor-20190706/questions/hogyvagy/answers").add({
-    answer: "3",
-    email: "pitukgabor@gmail.com",
-    name: "PGabor",
-    timestamp: new Date()
-})
-.then(function(docRef) {
-    console.log("Document written with ID: ", docRef.id);
-})
-.catch(function(error) {
-    console.error("Error adding document: ", error);
-});
-
-
-
 
 class Question extends React.Component {
   constructor(props) {
@@ -82,8 +64,7 @@ export default class App extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Lorem ipsum!</Text>
-        <Question question="Hogy vagy?"/>
+        <Welcome />
       </View>
     );
   }
