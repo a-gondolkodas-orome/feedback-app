@@ -5,10 +5,11 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import Welcome from './Welcome'
 import { Question } from './Question.js';
+import NotifService from './NotifService';
 
+// Only to supress warnings
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
-
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = _.clone(console);
 console.warn = message => {
@@ -33,6 +34,8 @@ export default class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
+
     // TODO: probably we should use Redux instead of this.
     this.state = {
       isShowingQuestion: false,
@@ -77,8 +80,25 @@ export default class App extends React.Component {
           setName={this.setName}
           setEvent={this.setEvent}
         />
+        <TouchableOpacity style={styles.button} onPress={() => { this.notif.localNotif() }}><Text>Local Notification (now)</Text></TouchableOpacity>
+
       </View>
     );
+  }
+
+  onRegister(token) {
+    Alert.alert("Registered !", JSON.stringify(token));
+    console.log(token);
+    this.setState({ registerToken: token.token, gcmRegistered: true });
+  }
+
+  onNotif(notif) {
+    console.log(notif);
+    Alert.alert(notif.title, notif.message);
+  }
+
+  handlePerm(perms) {
+    Alert.alert("Permissions", JSON.stringify(perms));
   }
 }
 
