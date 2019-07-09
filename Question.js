@@ -207,7 +207,7 @@ export class Question extends React.Component {
   constructor(props) {
     super(props);
     this.id = this.props.store.getState().questionToShow;
-    this.questionObjectData = this.props.store.getState().questions[id];
+    this.questionObjectData = this.props.store.getState().questions[this.id].data;
   }
 
   submitAnswer(answer) {
@@ -232,6 +232,7 @@ export class Question extends React.Component {
   };
 
   render() {
+    console.log(this.questionObjectData);
     var questionComponentForType = (<Text>Ismeretlen kérdéstípus</Text>);
     if (this.questionObjectData.type == "scale5") {
       questionComponentForType = (<Scale5 question={this} />);

@@ -3,6 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
+import { loadQuestions } from './logic';
 
 export default class Welcome extends React.Component {
 
@@ -58,6 +59,7 @@ export default class Welcome extends React.Component {
       return;
     }
 
+    // TODO: move the below code to logic.js with some error returned.
     const db = firebase.firestore();
     var welcome = this;
     var store = this.props.store;
@@ -82,7 +84,7 @@ export default class Welcome extends React.Component {
         let event = { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
         console.log("Selected event: ", event);
         store.dispatch({ type: 'SET_EVENT', event: event });
-        welcome.props.loadQuestions();
+        loadQuestions();
       })
       .catch(function(error) {
         console.log("Error getting event: ", error);

@@ -1,3 +1,4 @@
+import { createStore } from 'redux'
 
 // Actions:
 // SET_EVENT {event}
@@ -46,3 +47,5 @@ export default function feedbackReducer(state = initialState, action) {
       return state;
   }
 }
+
+export const store = createStore(feedbackReducer);
