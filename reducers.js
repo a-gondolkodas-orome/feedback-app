@@ -2,7 +2,7 @@
 // Actions:
 // SET_EVENT {event}
 // SET_NAME {name}
-// ADD_QUESTION {id, doc}
+// ADD_QUESTION {id, data}
 // ADD_ANSWER {questionId, answer}
 // SHOW_QUESTION {id}
 // RESET
@@ -11,7 +11,7 @@ const initialState = {
   event: null,
   questions: {},
   questionToShow: "",
-  name: "",
+  name: "N Laci", // TODO: this is just for debugging, should be ""
 }
 
 export default function feedbackReducer(state = initialState, action) {
@@ -26,7 +26,7 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'ADD_QUESTION':
       let entry = {};
-      entry[action.id] = { question: action.question, answerCount: 0, lastAnswerTime: null }
+      entry[action.id] = { data: action.data, answerCount: 0, lastAnswerTime: null }
       return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)
       });

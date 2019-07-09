@@ -9,7 +9,7 @@ export default class Welcome extends React.Component {
   constructor(props) {
     super(props);
     // Default values for easier debugging, they should be "" instead.
-    this.state = { name: "N Laci", code: "1337" };
+    this.state = { code: "1337" };
   }
 
   render() {
@@ -21,11 +21,11 @@ export default class Welcome extends React.Component {
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
-          onChangeText={(text) => this.setState({name: text})}
-          value={this.state.name}
+          onChangeText={(text) => this.props.store.dispatch({ type: 'SET_NAME', name: text})}
+          value={this.props.store.getState().name}
           autoCapitalize="words"
           autoCorrect={false}
-          onSubmitEditing={() => { this.nameTextInput.focus(); }}
+          onSubmitEditing={() => { this.codeTextInput.focus(); }}
         />
         <Text style={styles.label}>Esemény kódja:</Text>
         <TextInput
@@ -47,59 +47,44 @@ export default class Welcome extends React.Component {
   }
 
   connectToEvent() {
-    if (this.state.name == "") {
+    if (this.props.store.getState().name == "") {
       this.nameTextInput.focus();
+      // TODO: red border
       return;
     }
     if (this.state.code == "") {
       this.codeTextInput.focus();
+      // TODO: red border
       return;
     }
-    this.props.setName(this.state.name);
 
     const db = firebase.firestore();
     var welcome = this;
+    var store = this.props.store;
 
     db.collection("events").where("code", "==", welcome.state.code)
       .get()
       .then(function(querySnapshot) {
-        if (querySnapshot.size != 1) {
+        if (querySnapshot.size < 1) {
           console.log("Did not find event: " + welcome.state.code);
           // TODO: maybe display error message
           welcome.setState({code: ""});
           welcome.codeTextInput.focus();
           return;
         }
-        console.log("Found event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
-        welcome.props.setEvent(querySnapshot.docs[0]);
-        // Next step: jump to the event. For now we will just jump to a question of it.
-        welcome.getQuestion(querySnapshot.docs[0].ref);
+        if (querySnapshot.size < 1) {
+          console.log("Found multiple events: ");
+          for (let i = 0; i < querySnapshot.size; i++) {
+            console.log(querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
+          }
+          console.log("Choosing the first one of them...");
+        }
+        console.log("Selected event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
+        store.dispatch({ type: 'SET_EVENT', event: querySnapshot.docs[0] });
+        welcome.props.loadQuestions();
       })
       .catch(function(error) {
         console.log("Error getting event: ", error);
-        // TODO: display error
-      });
-  }
-
-  getQuestion(eventRef) {
-    var welcome = this;
-    eventRef.collection("questions")
-      .get()
-      .then(function(querySnapshot) {
-        if (querySnapshot.size == 0) {
-          console.log("Did not find questions for event: " + eventRef.path);
-          return;
-        }
-        // Just show the first scale question.
-        for (let i = 0; i < querySnapshot.size; i++){
-          if (querySnapshot.docs[i].data().type.startsWith("word")) {
-            welcome.props.showQuestion(querySnapshot.docs[i]);
-          }
-        }
-        
-      })
-      .catch(function(error) {
-        console.log("Error getting questions: ", error);
         // TODO: display error
       });
   }

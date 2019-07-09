@@ -4,7 +4,9 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Button } fr
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import Welcome from './Welcome'
-import { Question } from './Question.js';
+import Question from './Question';
+import { createStore } from 'redux'
+import feedbackReducer from './reducers'
 
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
@@ -28,17 +30,17 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
+const store = createStore(feedbackReducer);
 
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.store = store;
     // TODO: probably we should use Redux instead of this.
     this.state = {
       isShowingQuestion: false,
       questionDocSnap: null,
-      name: null,
-      eventDocSnap: null
     }
   }
 
@@ -50,22 +52,13 @@ export default class App extends React.Component {
     });
   }
 
-  setName = (name) => {
-    this.setState({ name: name });
-  }
-
-  setEvent = (eventDocSnap) => {
-    this.setState({ eventDocSnap: eventDocSnap });
-  }
-
   render() {
-    if (this.state.isShowingQuestion) {
+    if (this.store.getState().questionToShow != "") {
       return (
         <View style={styles.container}>
           <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.state.eventDocSnap.data().name}</Text>
           <Question
-            questionObject={this.state.questionDocSnap}
-            name={this.state.name}
+            store={this.store}
           />
         </View>
       );
@@ -73,12 +66,45 @@ export default class App extends React.Component {
     return (
       <View style={styles.container}>
         <Welcome
-          showQuestion={this.showQuestion}
-          setName={this.setName}
-          setEvent={this.setEvent}
+          store={this.store}
+          loadQuestions={this.loadQuestions.bind(this)}
         />
       </View>
     );
+  }
+
+  chooseQuestion() {
+    // Just show the first wordcloud question.
+    const questions = Object.values(store.getState().questions)
+    for (const questionDoc of questions) {
+      console.log(Object.keys(questionDoc));
+      if (questionDoc.data().type.startsWith("word")) {
+        store.dispatch({ type: 'SHOW_QUESTION', id: questionDoc.id });
+      }
+    }
+  }
+
+  loadQuestions() {
+    let eventRef = store.getState().event.ref;
+    var app = this;
+    eventRef.collection("questions")
+      .get()
+      .then(function(querySnapshot) {
+        if (querySnapshot.size == 0) {
+          console.log("Did not find questions for event: " + eventRef.path);
+          return;
+        }
+        for (const doc of querySnapshot.docs) {
+          if (! (doc.id in store.getState().questions)) {
+            store.dispatch({ type: 'ADD_QUESTION', id: doc.id, data: doc.data() });
+          }
+        }
+        app.chooseQuestion();
+      })
+      .catch(function(error) {
+        console.log("Error getting questions: ", error);
+        // TODO: display error
+      });
   }
 }
 

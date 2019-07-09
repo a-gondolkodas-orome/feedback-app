@@ -202,28 +202,31 @@ class TextBox extends React.Component {
 
 export class Question extends React.Component {
 
-//  props: `questionObject`: firebase QueryDocumentSnapshot object
-//          `name`: string, name of the user
+//  props: `store`: redux store
 
   constructor(props) {
     super(props);
-    this.questionObjectData = this.props.questionObject.data();
+    this.id = this.props.store.getState().questionToShow;
+    this.questionObjectData = this.questions[id];
   }
 
   submitAnswer(answer) {
-
-    this.props.questionObject.ref.collection('answers').add({
+    let answerObject = {
       answer: answer,
       // email: email,
-      name: this.props.name,
+      name: this.props.store.getState().name,
       timestamp: new Date()
-    })
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-    });
+    };
+    const db = firebase.firestore();
+    db/* TODO: get question here */.collection('answers')
+      .add(answerObject)
+      .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
+          // TODO: here comes the ADD_ANSWER action
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      });
   };
 
   render() {
