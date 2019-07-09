@@ -1,11 +1,13 @@
 
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { loadQuestions } from './logic';
+import { store } from './reducers';
 
-export default class Welcome extends React.Component {
+class Welcome extends React.Component {
 
   constructor(props) {
     super(props);
@@ -22,8 +24,8 @@ export default class Welcome extends React.Component {
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
-          onChangeText={(text) => this.props.store.dispatch({ type: 'SET_NAME', name: text})}
-          value={this.props.store.getState().name}
+          onChangeText={(text) => store.dispatch({ type: 'SET_NAME', name: text})}
+          value={this.props.name}
           autoCapitalize="words"
           autoCorrect={false}
           onSubmitEditing={() => { this.codeTextInput.focus(); }}
@@ -48,7 +50,7 @@ export default class Welcome extends React.Component {
   }
 
   connectToEvent() {
-    if (this.props.store.getState().name == "") {
+    if (this.props.name == "") {
       this.nameTextInput.focus();
       // TODO: red border
       return;
@@ -62,7 +64,6 @@ export default class Welcome extends React.Component {
     // TODO: move the below code to logic.js with some error returned.
     const db = firebase.firestore();
     var welcome = this;
-    var store = this.props.store;
 
     db.collection("events").where("code", "==", welcome.state.code)
       .get()
@@ -92,6 +93,15 @@ export default class Welcome extends React.Component {
       });
   }
 }
+
+const mapStateToProps = state => ({
+  name: state.name,
+  event: state.event
+});
+
+// TODO: introduce mapDispatchToProps with setting name.
+
+export default connect(mapStateToProps)(Welcome);
 
 const styles = StyleSheet.create({
   container: {

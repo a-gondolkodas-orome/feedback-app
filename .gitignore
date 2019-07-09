@@ -55,6 +55,7 @@ package-lock.json
 
 # Expo
 .expo
+.expo-shared
 
 # OS X
 .DS_Store

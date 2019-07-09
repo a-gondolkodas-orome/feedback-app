@@ -35,7 +35,7 @@ export default function feedbackReducer(state = initialState, action) {
     case 'ADD_ANSWER':
       let newState = Object.assign({}, state);
       newState.questions[action.questionId].answerCount++;
-      newState.questions[action.questionId].lastAnswerTime = answer.timestamp;
+      newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       return newState;
     case 'SHOW_QUESTION':
         return Object.assign({}, state, {
