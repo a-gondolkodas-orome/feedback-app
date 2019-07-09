@@ -56,7 +56,7 @@ export default class App extends React.Component {
     if (this.store.getState().questionToShow != "") {
       return (
         <View style={styles.container}>
-          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.state.eventDocSnap.data().name}</Text>
+          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{store.getState().event.data.name}</Text>
           <Question
             store={this.store}
           />
@@ -75,19 +75,21 @@ export default class App extends React.Component {
 
   chooseQuestion() {
     // Just show the first wordcloud question.
-    const questions = Object.values(store.getState().questions)
-    for (const questionDoc of questions) {
-      console.log(Object.keys(questionDoc));
-      if (questionDoc.data().type.startsWith("word")) {
-        store.dispatch({ type: 'SHOW_QUESTION', id: questionDoc.id });
+    const ids = Object.keys(store.getState().questions)
+    for (const id of ids) {
+      const question = store.getState().questions[id];
+      console.log(question);
+      if (question.data.type.startsWith("word")) {
+        store.dispatch({ type: 'SHOW_QUESTION', id: id });
       }
     }
   }
 
   loadQuestions() {
-    let eventRef = store.getState().event.ref;
+    let event = store.getState().event;
     var app = this;
-    eventRef.collection("questions")
+    const db = firebase.firestore();
+    db.collection("events").doc(event.id).collection("questions")
       .get()
       .then(function(querySnapshot) {
         if (querySnapshot.size == 0) {

@@ -8,7 +8,8 @@
 // RESET
 
 const initialState = {
-  event: null,
+  eventId: "",
+  eventData: null,
   questions: {},
   questionToShow: "",
   name: "N Laci", // TODO: this is just for debugging, should be ""
@@ -18,7 +19,7 @@ export default function feedbackReducer(state = initialState, action) {
   switch (action.type) {
     case 'SET_EVENT':
       return Object.assign({}, state, {
-        event: action.event
+        event: action.event,
       });
     case 'SET_NAME':
       return Object.assign({}, state, {

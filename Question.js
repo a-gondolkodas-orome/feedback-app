@@ -207,7 +207,7 @@ export class Question extends React.Component {
   constructor(props) {
     super(props);
     this.id = this.props.store.getState().questionToShow;
-    this.questionObjectData = this.questions[id];
+    this.questionObjectData = this.props.store.getState().questions[id];
   }
 
   submitAnswer(answer) {
@@ -218,7 +218,9 @@ export class Question extends React.Component {
       timestamp: new Date()
     };
     const db = firebase.firestore();
-    db/* TODO: get question here */.collection('answers')
+    const event = this.props.store.getState().event;
+    db.collection("events").doc(event.id).collection("questions")
+      .doc(this.id).collection('answers')
       .add(answerObject)
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id, " data: ", answerObject);

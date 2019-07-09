@@ -79,8 +79,9 @@ export default class Welcome extends React.Component {
           }
           console.log("Choosing the first one of them...");
         }
-        console.log("Selected event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
-        store.dispatch({ type: 'SET_EVENT', event: querySnapshot.docs[0] });
+        let event = { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
+        console.log("Selected event: ", event);
+        store.dispatch({ type: 'SET_EVENT', event: event });
         welcome.props.loadQuestions();
       })
       .catch(function(error) {
