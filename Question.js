@@ -1,15 +1,15 @@
 
 import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Button } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-
-
+import { addAnswer } from './logic.js';
 
 
 class WordCloud extends React.Component {
 
-// props: `question`: reference to parent Question component
+// props: question: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -18,7 +18,7 @@ class WordCloud extends React.Component {
   render() {
 
     var wordComponents=[];
-    var i=1;
+    let i=1;
     console.log(this.props.question.questionObjectData);
     for (wordId in this.props.question.questionObjectData.words) {
       wordComponents.push(
@@ -70,7 +70,7 @@ class WordButtonForWordCloudAnswer extends React.Component {
 
 class Scale5 extends React.Component {
 
-// props: `question`: reference to parent Question component
+// props: question: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -79,7 +79,7 @@ class Scale5 extends React.Component {
   render() {
 
     var buttons=[];
-    for (i=1; i<=5; i++) {
+    for (let i=1; i<=5; i++) {
       buttons.push(
         <CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />
       );
@@ -102,7 +102,7 @@ class Scale5 extends React.Component {
 
 class Scale10 extends React.Component {
 
-// props: `question`: reference to parent Question component
+// props: question: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -111,10 +111,10 @@ class Scale10 extends React.Component {
   render() {
 
     var buttons1=[], buttons2=[];
-    for (i=1; i<=5; i++) {
+    for (let i=1; i<=5; i++) {
       buttons1.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
     }
-    for (i=6; i<=10; i++) {
+    for (let i=6; i<=10; i++) {
       buttons2.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
     }
 
@@ -139,7 +139,7 @@ class Scale10 extends React.Component {
 
 class CircularButtonForScaleAnswer extends React.Component {
 
-// props: `question`: reference to parent Question component
+// props: question: reference to parent Question component
 
   constructor(props) {
     super(props);
@@ -163,7 +163,7 @@ class CircularButtonForScaleAnswer extends React.Component {
 
 class TextBox extends React.Component {
 
-// props: `question`: reference to parent Question component
+// props: question: reference to parent Question component
   
   constructor(props) {
     super(props);
@@ -200,33 +200,36 @@ class TextBox extends React.Component {
 }
 
 
-export class Question extends React.Component {
-
-//  props: `questionObject`: firebase QueryDocumentSnapshot object
-//          `name`: string, name of the user
+class Question extends React.Component {
 
   constructor(props) {
     super(props);
-    this.questionObjectData = this.props.questionObject.data();
+    this.questionObjectData = this.props.questions[this.props.id].data;
   }
 
   submitAnswer(answer) {
-
-    this.props.questionObject.ref.collection('answers').add({
+    let answerObject = {
       answer: answer,
       // email: email,
       name: this.props.name,
       timestamp: new Date()
-    })
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id);
-    })
-    .catch(function(error) {
-        console.error("Error adding document: ", error);
-    });
+    };
+    const db = firebase.firestore();
+    let questionId = this.props.id;
+    db.collection("events").doc(this.props.event.id).collection("questions")
+      .doc(this.props.id).collection('answers')
+      .add(answerObject)
+      .then(function(docRef) {
+          console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
+          addAnswer(questionId, answerObject);
+      })
+      .catch(function(error) {
+          console.error("Error adding document: ", error);
+      });
   };
 
   render() {
+    console.log(this.questionObjectData);
     var questionComponentForType = (<Text>Ismeretlen kérdéstípus</Text>);
     if (this.questionObjectData.type == "scale5") {
       questionComponentForType = (<Scale5 question={this} />);
@@ -239,12 +242,21 @@ export class Question extends React.Component {
     }
     return (
       <View style={question_styles.container} >
-          <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
-          {questionComponentForType}
+        <Text style={question_styles.question_text} >{this.questionObjectData.text}</Text>
+        {questionComponentForType}
       </View>
     );
   }
 }
+
+const mapStateToProps = state => ({ 
+  id: state.questionToShow,
+  questions: state.questions,
+  event: state.event,
+  name: state.name
+});
+
+export default connect(mapStateToProps)(Question);
 
 const question_styles = StyleSheet.create({
   container: {

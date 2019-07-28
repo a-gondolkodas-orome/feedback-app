@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, Button } from 'react-native';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import Welcome from './Welcome'
-import { Question } from './Question.js';
+import Main from './Main';
+import { Provider } from 'react-redux'
+import { store } from './reducers'
 
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
@@ -28,67 +28,19 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-
 export default class App extends React.Component {
 
   constructor(props) {
     super(props);
-    // TODO: probably we should use Redux instead of this.
-    this.state = {
-      isShowingQuestion: false,
-      questionDocSnap: null,
-      name: null,
-      eventDocSnap: null
-    }
-  }
-
-  showQuestion = (questionDocSnap) => {
-    console.log("Showing question: " + questionDocSnap.ref.path);
-    this.setState({
-      isShowingQuestion: true,
-      questionDocSnap: questionDocSnap
-    });
-  }
-
-  setName = (name) => {
-    this.setState({ name: name });
-  }
-
-  setEvent = (eventDocSnap) => {
-    this.setState({ eventDocSnap: eventDocSnap });
   }
 
   render() {
-    if (this.state.isShowingQuestion) {
-      return (
-        <View style={styles.container}>
-          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.state.eventDocSnap.data().name}</Text>
-          <Question
-            questionObject={this.state.questionDocSnap}
-            name={this.state.name}
-          />
-        </View>
-      );
-    }
     return (
-      <View style={styles.container}>
-        <Welcome
-          showQuestion={this.showQuestion}
-          setName={this.setName}
-          setEvent={this.setEvent}
-        />
-      </View>
+      <Provider store={store}>
+        <Main />
+      </Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 

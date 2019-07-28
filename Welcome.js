@@ -1,15 +1,18 @@
 
 import React from 'react';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
+import { loadQuestions } from './logic';
+import { store } from './reducers';
 
-export default class Welcome extends React.Component {
+class Welcome extends React.Component {
 
   constructor(props) {
     super(props);
     // Default values for easier debugging, they should be "" instead.
-    this.state = { name: "N Laci", code: "1337" };
+    this.state = { code: "1337" };
   }
 
   render() {
@@ -21,11 +24,11 @@ export default class Welcome extends React.Component {
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
-          onChangeText={(text) => this.setState({name: text})}
-          value={this.state.name}
+          onChangeText={(text) => store.dispatch({ type: 'SET_NAME', name: text})}
+          value={this.props.name}
           autoCapitalize="words"
           autoCorrect={false}
-          onSubmitEditing={() => { this.nameTextInput.focus(); }}
+          onSubmitEditing={() => { this.codeTextInput.focus(); }}
         />
         <Text style={styles.label}>Esemény kódja:</Text>
         <TextInput
@@ -47,63 +50,58 @@ export default class Welcome extends React.Component {
   }
 
   connectToEvent() {
-    if (this.state.name == "") {
+    if (this.props.name == "") {
       this.nameTextInput.focus();
+      // TODO: red border
       return;
     }
     if (this.state.code == "") {
       this.codeTextInput.focus();
+      // TODO: red border
       return;
     }
-    this.props.setName(this.state.name);
 
+    // TODO: move the below code to logic.js with some error returned.
     const db = firebase.firestore();
     var welcome = this;
 
     db.collection("events").where("code", "==", welcome.state.code)
       .get()
       .then(function(querySnapshot) {
-        if (querySnapshot.size != 1) {
+        if (querySnapshot.size < 1) {
           console.log("Did not find event: " + welcome.state.code);
           // TODO: maybe display error message
           welcome.setState({code: ""});
           welcome.codeTextInput.focus();
           return;
         }
-        console.log("Found event: ", querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
-        welcome.props.setEvent(querySnapshot.docs[0]);
-        // Next step: jump to the event. For now we will just jump to a question of it.
-        welcome.getQuestion(querySnapshot.docs[0].ref);
+        if (querySnapshot.size < 1) {
+          console.log("Found multiple events: ");
+          for (let i = 0; i < querySnapshot.size; i++) {
+            console.log(querySnapshot.docs[0].id, " => ", querySnapshot.docs[0].data());
+          }
+          console.log("Choosing the first one of them...");
+        }
+        let event = { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
+        console.log("Selected event: ", event);
+        store.dispatch({ type: 'SET_EVENT', event: event });
+        loadQuestions();
       })
       .catch(function(error) {
         console.log("Error getting event: ", error);
         // TODO: display error
       });
   }
-
-  getQuestion(eventRef) {
-    var welcome = this;
-    eventRef.collection("questions")
-      .get()
-      .then(function(querySnapshot) {
-        if (querySnapshot.size == 0) {
-          console.log("Did not find questions for event: " + eventRef.path);
-          return;
-        }
-        // Just show the first scale question.
-        for (let i = 0; i < querySnapshot.size; i++){
-          if (querySnapshot.docs[i].data().type.startsWith("word")) {
-            welcome.props.showQuestion(querySnapshot.docs[i]);
-          }
-        }
-        
-      })
-      .catch(function(error) {
-        console.log("Error getting questions: ", error);
-        // TODO: display error
-      });
-  }
 }
+
+const mapStateToProps = state => ({
+  name: state.name,
+  event: state.event
+});
+
+// TODO: introduce mapDispatchToProps with setting name.
+
+export default connect(mapStateToProps)(Welcome);
 
 const styles = StyleSheet.create({
   container: {
