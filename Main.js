@@ -5,13 +5,33 @@ import Welcome from './Welcome'
 import Question from './Question'
 // TODO: should be removed.
 import { store } from './reducers';
+import { Notifications } from 'expo';
+import { registerForPushNotificationsAsync } from './notif';
 
 class Main extends React.Component {
 
     constructor(props) {
       super(props);
+      this.state = {
+        notification: {},
+      }
     }
-  
+
+    componentDidMount() {
+      registerForPushNotificationsAsync();
+
+        // Handle notifications that are received or selected while the app
+      // is open. If the app was closed and then opened by tapping the
+      // notification (rather than just tapping the app icon to open it),
+      // this function will fire on the next tick after the app starts
+      // with the notification data.
+      this._notificationSubscription = Notifications.addListener(this._handleNotification);
+    }
+
+    _handleNotification = (notification) => {
+      this.setState({notification: notification});
+    };
+
     render() {
       if (this.props.questionToShow != "") {
         return (
@@ -28,6 +48,8 @@ class Main extends React.Component {
           <Welcome
             store={store}
           />
+          <Text>Origin: {this.state.notification.origin}</Text>
+          <Text>Data: {JSON.stringify(this.state.notification.data)}</Text>
         </View>
       );
     }
