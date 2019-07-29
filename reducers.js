@@ -21,6 +21,7 @@ export default function feedbackReducer(state = initialState, action) {
     case 'SET_EVENT':
       return Object.assign({}, state, {
         event: action.event,
+        eventId: action.event.id,
       });
     case 'SET_NAME':
       return Object.assign({}, state, {

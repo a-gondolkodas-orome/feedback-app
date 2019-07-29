@@ -28,7 +28,7 @@ export function loadQuestions() {
           store.dispatch({ type: 'ADD_QUESTION', id: doc.id, data: doc.data() });
         }
       }
-      chooseQuestion();
+//      chooseQuestion();
     })
     .catch(function(error) {
       console.log("Error getting questions: ", error);

@@ -47,6 +47,14 @@ class Main extends React.Component {
         </View>
       );
     }
+    else if (this.props.eventId != "") {
+      return (
+        <View style={styles.container}>
+          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
+          <Text>Majd küldünk értesítést, ha kapsz kitöltendő kérdést.</Text>
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
         <Welcome
@@ -59,7 +67,8 @@ class Main extends React.Component {
 
 const mapStateToProps = state => ({ 
   event: state.event,
-  questionToShow: state.questionToShow
+  eventId: state.eventId,
+  questionToShow: state.questionToShow,
 });
 
 export default connect(mapStateToProps)(Main);
