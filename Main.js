@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
 // TODO: should be removed.
+import { chooseQuestion } from './logic';
 import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
@@ -12,15 +13,15 @@ class Main extends React.Component {
 
     constructor(props) {
       super(props);
-      this.state = {
-        notification: {},
-      }
+//      this.state = {
+//        notification: {},
+//      }
     }
 
     componentDidMount() {
       registerForPushNotificationsAsync();
 
-        // Handle notifications that are received or selected while the app
+      // Handle notifications that are received or selected while the app
       // is open. If the app was closed and then opened by tapping the
       // notification (rather than just tapping the app icon to open it),
       // this function will fire on the next tick after the app starts
@@ -29,46 +30,46 @@ class Main extends React.Component {
     }
 
     _handleNotification = (notification) => {
-      this.setState({notification: notification});
-    };
+//      this.setState({notification: notification});
+//      alert('Notification received:' + notification.origin + ', ' + notification.data);
+      console.log(notification);
+      chooseQuestion();
+  };
 
-    render() {
-      if (this.props.questionToShow != "") {
-        return (
-          <View style={styles.container}>
-            <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
-            <Question
-              store={store}
-            />
-          </View>
-        );
-      }
+  render() {
+    if (this.props.questionToShow != "") {
       return (
         <View style={styles.container}>
-          <Welcome
+          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
+          <Question
             store={store}
           />
-          <Text>Origin: {this.state.notification.origin}</Text>
-          <Text>Data: {JSON.stringify(this.state.notification.data)}</Text>
         </View>
       );
     }
+    return (
+      <View style={styles.container}>
+        <Welcome
+          store={store}
+        />
+      </View>
+    );
   }
-  
-  const mapStateToProps = state => ({ 
-    event: state.event,
-    questionToShow: state.questionToShow
-  });
-  
-  export default connect(mapStateToProps)(Main);
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
-  
-  
+}
+
+const mapStateToProps = state => ({ 
+  event: state.event,
+  questionToShow: state.questionToShow
+});
+
+export default connect(mapStateToProps)(Main);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
