@@ -19,7 +19,7 @@ class WordCloud extends React.Component {
 
     var wordComponents=[];
     let i=1;
-    console.log(this.props.question.questionObjectData);
+//    console.log(this.props.question.questionObjectData);
     for (wordId in this.props.question.questionObjectData.words) {
       wordComponents.push(
         <WordButtonForWordCloudAnswer key={i} title={this.props.question.questionObjectData.words[wordId]}

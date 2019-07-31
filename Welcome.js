@@ -4,9 +4,8 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-nativ
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import { loadQuestions } from './logic';
+import { loadQuestions, scheduleAllLoadedQuestions } from './logic';
 import { store } from './reducers';
-import { Notifications } from 'expo';
 
 class Welcome extends React.Component {
 
@@ -92,17 +91,6 @@ class Welcome extends React.Component {
         console.log("Error getting event: ", error);
         // TODO: display error
     });
-
-    // Schedule a notification in 5 seconds
-    Notifications.scheduleLocalNotificationAsync({
-        title: 'Hey!',
-        body: 'Hello there!',
-        data: {text: 'This is the data of the hello notification'},
-      },
-      {
-        time: (new Date()).getTime() + 5000,
-      }
-    );
   }
 }
 

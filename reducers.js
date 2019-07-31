@@ -10,18 +10,20 @@ import { createStore } from 'redux'
 
 const initialState = {
   eventId: "",
-  eventData: null,
+  event: null,//{ data: { name: "", }, },
   questions: {},
+  dueQuestionIds: [],
   questionToShow: "",
   name: "N Laci", // TODO: this is just for debugging, should be ""
 }
 
 export default function feedbackReducer(state = initialState, action) {
+  console.log(action.type);
   switch (action.type) {
     case 'SET_EVENT':
       return Object.assign({}, state, {
         event: action.event,
-        eventId: action.event.id,
+        eventId: action.event.id, // redundant, we can delete
       });
     case 'SET_NAME':
       return Object.assign({}, state, {
@@ -29,7 +31,7 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'ADD_QUESTION':
       let entry = {};
-      entry[action.id] = { data: action.data, answerCount: 0, lastAnswerTime: null }
+      entry[action.id] = { id: action.id, data: action.data, answerCount: 0, lastAnswerTime: null, scheduledFor: null, };
       return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)
       });
@@ -37,11 +39,30 @@ export default function feedbackReducer(state = initialState, action) {
       let newState = Object.assign({}, state);
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
+      newState.questionToShow = "";
       return newState;
-    case 'SHOW_QUESTION':
+    case 'SHOW_NEXT_DUE_QUESTION':
+      if (state.dueQuestionIds.length === 0)
         return Object.assign({}, state, {
-          questionToShow: action.id
-        });      
+          questionToShow: "", // restore to show <no question> page 
+        });
+      else {
+        newState = Object.assign({}, state);
+        let questionId = newState.dueQuestionIds.shift();
+        console.log('Q to show: ' + questionId);
+        return Object.assign(newState, {
+          questionToShow: questionId,
+        });
+      }
+    case 'MAKE_QUESTION_DUE':
+      newState = Object.assign({}, state);
+      newState.questions[action.questionId].scheduledFor = null;
+      newState.dueQuestionIds.push(action.questionId);
+      return newState;
+    case 'SET_QUESTION_SCHEDULE_TIME':
+      newState = Object.assign({}, state);
+      newState.questions[action.questionId].scheduledFor = action.timestamp;
+      return newState;
     case 'RESET':
       return initialState;
     default:

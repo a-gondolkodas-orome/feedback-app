@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
 // TODO: should be removed.
-import { chooseQuestion } from './logic';
+import { showAllDueQuestions } from './logic';
 import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
@@ -33,7 +33,23 @@ class Main extends React.Component {
 //      this.setState({notification: notification});
 //      alert('Notification received:' + notification.origin + ', ' + notification.data);
       console.log(notification);
-      chooseQuestion();
+
+      let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
+
+      const ids = Object.keys(store.getState().questions);
+      for (const id of ids) {
+        const question = store.getState().questions[id];
+        if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
+          store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
+        }
+        else if (question.scheduledFor !== null) {
+          // debugging
+        }
+      }
+
+      if (store.getState().questionToShow === "")
+        store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
+
   };
 
   render() {
