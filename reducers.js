@@ -15,6 +15,7 @@ const initialState = {
   dueQuestionIds: [],
   questionToShow: "",
   name: "N Laci", // TODO: this is just for debugging, should be ""
+  spinner: false,
 }
 
 export default function feedbackReducer(state = initialState, action) {
@@ -63,7 +64,15 @@ export default function feedbackReducer(state = initialState, action) {
       newState = Object.assign({}, state);
       newState.questions[action.questionId].scheduledFor = action.timestamp;
       return newState;
-    case 'RESET':
+    case 'SPINNER_ON':
+      return Object.assign({}, state, {
+        spinner: true
+      });
+    case 'SPINNER_OFF':
+      return Object.assign({}, state, {
+        spinner: false
+      });
+      case 'RESET':
       return initialState;
     default:
       return state;

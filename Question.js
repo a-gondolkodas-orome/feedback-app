@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { addAnswer } from './logic.js';
+import { store } from './reducers';
 
 
 class WordCloud extends React.Component {
@@ -208,6 +209,7 @@ class Question extends React.Component {
   }
 
   submitAnswer(answer) {
+    store.dispatch({ type: 'SPINNER_ON' });
     let answerObject = {
       answer: answer,
       // email: email,
@@ -225,6 +227,7 @@ class Question extends React.Component {
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
+          store.dispatch({ type: 'SPINNER_OFF' });
       });
   };
 

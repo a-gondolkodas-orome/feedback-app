@@ -8,6 +8,7 @@ import { showAllDueQuestions } from './logic';
 import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 class Main extends React.Component {
 
@@ -56,6 +57,11 @@ class Main extends React.Component {
     if (this.props.questionToShow != "") {
       return (
         <View style={styles.container}>
+          <Spinner
+            visible={this.props.spinner}
+            textContent={'Betöltés...'}
+            textStyle={styles.spinnerTextStyle}
+          />
           <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
           <Question
             store={store}
@@ -64,8 +70,14 @@ class Main extends React.Component {
       );
     }
     else if (this.props.eventId != "") {
+      // TODO: this is almost same as above, try to refactor
       return (
         <View style={styles.container}>
+          <Spinner
+            visible={this.props.spinner}
+            textContent={'Betöltés...'}
+            textStyle={styles.spinnerTextStyle}
+          />
           <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
           <Text>Majd küldünk értesítést, ha kapsz kitöltendő kérdést.</Text>
         </View>
@@ -73,6 +85,11 @@ class Main extends React.Component {
     }
     return (
       <View style={styles.container}>
+        <Spinner
+            visible={this.props.spinner}
+            textContent={'Betöltés...'}
+            textStyle={styles.spinnerTextStyle}
+          />
         <Welcome
           store={store}
         />
@@ -85,6 +102,7 @@ const mapStateToProps = state => ({
   event: state.event,
   eventId: state.eventId,
   questionToShow: state.questionToShow,
+  spinner: state.spinner,
 });
 
 export default connect(mapStateToProps)(Main);
@@ -95,6 +113,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF'
   },
 });
 

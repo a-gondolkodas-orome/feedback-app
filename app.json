@@ -24,7 +24,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "hu.agondolkodasorome.feedback",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "hu.agondolkodasorome.feedback"
     }
   }
 }

@@ -4,7 +4,7 @@ import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-nativ
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import { loadQuestions, scheduleAllLoadedQuestions } from './logic';
+import { loadQuestions } from './logic';
 import { store } from './reducers';
 
 class Welcome extends React.Component {
@@ -61,6 +61,8 @@ class Welcome extends React.Component {
       return;
     }
 
+    store.dispatch({ type: 'SPINNER_ON' });
+
     // TODO: move the below code to logic.js with some error returned.
     const db = firebase.firestore();
     var welcome = this;
@@ -73,6 +75,7 @@ class Welcome extends React.Component {
           // TODO: maybe display error message
           welcome.setState({code: ""});
           welcome.codeTextInput.focus();
+          store.dispatch({ type: 'SPINNER_OFF' });
           return;
         }
         if (querySnapshot.size < 1) {
@@ -90,6 +93,7 @@ class Welcome extends React.Component {
       .catch(function(error) {
         console.log("Error getting event: ", error);
         // TODO: display error
+        store.dispatch({ type: 'SPINNER_OFF' });
     });
   }
 }
