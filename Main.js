@@ -1,10 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View} from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
-// TODO: should be removed.
-import { showAllDueQuestions } from './logic';
 import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
@@ -76,7 +74,15 @@ class Main extends React.Component {
             textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
-          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
+          <View style={{flex: 0.2, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+            <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
+            <TouchableOpacity
+              style={styles.eventLeaveButton}
+              onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}
+            >
+              <Text style={{color:'#ff3030', fontSize: 30 }}>&times;</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
         </View>
       );
@@ -118,7 +124,7 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   textStyle: {
-    marginTop: 40,
+    marginTop: 30,
     fontSize: 24,
     color: '#fff',
     textAlign: "center"
@@ -128,6 +134,19 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: '#d3d3d3',
     textAlign: "center"
+  },
+  eventLeaveButton: {
+    alignItems:'center',
+    justifyContent:'center',
+    borderWidth: 1,
+    borderColor:'rgba(255,255,255,0.2)',
+    width: 40,
+    height: 40,
+    backgroundColor:'#0e1c42',
+    color: '#fff',
+    borderRadius: 20,
+    marginTop: 40,
+    marginLeft: 20,
   }
 });
 

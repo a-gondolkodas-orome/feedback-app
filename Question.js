@@ -269,7 +269,7 @@ const question_styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   question_text: {
-    marginTop: 50,
+    marginTop: 30,
     fontSize: 24,
     alignItems: 'center',
     justifyContent: 'center',

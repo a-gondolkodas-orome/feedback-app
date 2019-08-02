@@ -8,7 +8,6 @@ export function chooseQuestion() {
   const ids = Object.keys(store.getState().questions);
   for (const id of ids) {
     const question = store.getState().questions[id];
-    //console.log(question);
     if (question.data.type.startsWith("word")) {
       store.dispatch({ type: 'SHOW_QUESTION', id: id });
     }

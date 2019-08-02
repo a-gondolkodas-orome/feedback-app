@@ -1,4 +1,5 @@
-import { createStore } from 'redux'
+import { createStore } from 'redux';
+import { Notifications } from 'expo';
 
 // Actions:
 // SET_EVENT {event}
@@ -10,7 +11,7 @@ import { createStore } from 'redux'
 
 const initialState = {
   eventId: "",
-  event: null,//{ data: { name: "", }, },
+  event: null, // will be like this: { data: { name: "", }, },
   questions: {},
   dueQuestionIds: [],
   questionToShow: "",
@@ -74,7 +75,10 @@ export default function feedbackReducer(state = initialState, action) {
       return Object.assign({}, state, {
         spinner: false
       });
-      case 'RESET':
+    case 'LEAVE_EVENT':
+      Notifications.cancelAllScheduledNotificationsAsync();
+      return initialState;
+    case 'RESET':
       return initialState;
     default:
       return state;
