@@ -31,8 +31,6 @@ class Main extends React.Component {
     }
 
     _handleNotification = (notification) => {
-//      this.setState({notification: notification});
-//      alert('Notification received:' + notification.origin + ', ' + notification.data);
       console.log(notification);
 
       let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
@@ -59,10 +57,10 @@ class Main extends React.Component {
         <View style={styles.container}>
           <Spinner
             visible={this.props.spinner}
-            textContent={'Betöltés...'}
+            textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
-          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
+          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
           <Question
             store={store}
           />
@@ -75,11 +73,11 @@ class Main extends React.Component {
         <View style={styles.container}>
           <Spinner
             visible={this.props.spinner}
-            textContent={'Betöltés...'}
+            textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
-          <Text style={{marginTop: 40, fontSize: 24, color: "grey"}}>{this.props.event.data.name}</Text>
-          <Text>Majd küldünk értesítést, ha kapsz kitöltendő kérdést.</Text>
+          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
+          <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
         </View>
       );
     }
@@ -87,7 +85,7 @@ class Main extends React.Component {
       <View style={styles.container}>
         <Spinner
             visible={this.props.spinner}
-            textContent={'Betöltés...'}
+            textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
         <Welcome
@@ -103,6 +101,7 @@ const mapStateToProps = state => ({
   eventId: state.eventId,
   questionToShow: state.questionToShow,
   spinner: state.spinner,
+  noQuestionText: state.noQuestionText,
 });
 
 export default connect(mapStateToProps)(Main);
@@ -110,12 +109,25 @@ export default connect(mapStateToProps)(Main);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#0b1633',
+    color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
   spinnerTextStyle: {
-    color: '#FFF'
+    color: '#fff'
   },
+  textStyle: {
+    marginTop: 40,
+    fontSize: 24,
+    color: '#fff',
+    textAlign: "center"
+  },
+  eventTextStyle: {
+    marginTop: 40,
+    fontSize: 36,
+    color: '#d3d3d3',
+    textAlign: "center"
+  }
 });
 

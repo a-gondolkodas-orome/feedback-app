@@ -39,7 +39,9 @@ export function loadQuestions() {
     store.dispatch({ type: 'SPINNER_OFF' });
 }
 
-const minTimeBetweenNotifications = 5 * 60 * 1000;
+//const minTimeBetweenNotifications = 5 * 60 * 1000;
+const minTimeBetweenNotifications = 60 * 1000;
+const randomRangeMultiplier = 0.1;
 
 function scheduleQuestionAroundTime(id, timestamp, range) {
   const questions = store.getState().questions;
@@ -57,35 +59,41 @@ function scheduleQuestionAroundTime(id, timestamp, range) {
   }
   if (scheduleFor == -1) {
     scheduleFor = timestamp + Math.floor((-1 + 2 * Math.random()) * range);
+    Notifications.scheduleLocalNotificationAsync({
+        title: 'Bejövő kérdés',
+        body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
+        ios: { sound: true },
+        android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
+      },
+      {
+        time: scheduleFor,
+      }
+    );
+    console.log("Notification set for: " + (new Date(scheduleFor).toISOString()))
   }
   
-  Notifications.scheduleLocalNotificationAsync({
-      title: 'Bejövő kérdés',
-      body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
-    },
-    {
-      time: scheduleFor,
-    }
-  );
-
   store.dispatch({ type: 'SET_QUESTION_SCHEDULE_TIME', questionId: id, timestamp: scheduleFor, });
 }
 
-export function scheduleAllLoadedQuestions() {
-  // only a first solution to check if it works
+function scheduleQuestionFromNow(id) {
   let now = (new Date()).getTime();
+  const question = store.getState().questions[id];
+  const freq = 60 * 1000 * question.data.frequency;
+  scheduleQuestionAroundTime(question.id, now + freq, randomRangeMultiplier * freq);
+}
 
+export function scheduleAllLoadedQuestions() {
   const ids = Object.keys(store.getState().questions);
   for (const id of ids) {
-    const question = store.getState().questions[id];
-    const freq = 60000 * question.data.frequency;
-    scheduleQuestionAroundTime(question.id, now + freq, freq / 10);
+    scheduleQuestionFromNow(id);
   }
 }
 
 
 export function addAnswer(questionId, answer) {
   store.dispatch({ type: 'ADD_ANSWER', questionId: questionId, answer: answer, });
+  Notifications.dismissAllNotificationsAsync();
+  scheduleQuestionFromNow(questionId);
   // After adding the answer we should display the next due question
   store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
   store.dispatch({ type: 'SPINNER_OFF' });

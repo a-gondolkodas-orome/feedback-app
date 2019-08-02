@@ -21,12 +21,20 @@ export async function registerForPushNotificationsAsync () {
     return;
   }
 
+  Notifications.createChannelAndroidAsync(
+    "FeedbackAppNewQuestion",
+    {
+      name: "Feedback App New Question",
+      sound: true,
+      vibrate: true,
+    });
+
   console.log('Notification permission: granted');
 
   // Get the token that uniquely identifies this device
   let token = await Notifications.getExpoPushTokenAsync();
 
-  console.log('User token:'+token);
+  console.log('User token:' + token);
 
   // POST the token to your backend server from where you can retrieve it to send push notifications.
 /*  return fetch(PUSH_ENDPOINT, {

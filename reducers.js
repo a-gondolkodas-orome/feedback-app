@@ -15,6 +15,7 @@ const initialState = {
   dueQuestionIds: [],
   questionToShow: "",
   name: "N Laci", // TODO: this is just for debugging, should be ""
+  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.",
   spinner: false,
 }
 
@@ -41,6 +42,7 @@ export default function feedbackReducer(state = initialState, action) {
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       newState.questionToShow = "";
+      newState.noQuestionText = "Köszönjük eddigi válaszaidat. Majd küldünk értesítést, ha kapsz kitöltendő kérdést.";
       return newState;
     case 'SHOW_NEXT_DUE_QUESTION':
       if (state.dueQuestionIds.length === 0)

@@ -110,7 +110,8 @@ export default connect(mapStateToProps)(Welcome);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#0b1633',
+    color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     margin: 10,
@@ -118,17 +119,23 @@ const styles = StyleSheet.create({
   label: {
     height: 40,
     fontSize: 24,
+    color: '#fff',
   },
   textInput: {
     height: 60,
-    borderColor: 'gray',
+    borderColor: '#0b1633',
+    borderBottomColor: '#fff',
+    color: '#fff',
     borderWidth: 1,
     fontSize: 30,
+    minWidth: 150,
+    textAlign: "center",
   },
   connectButton: {
     height: 50,
     alignItems: 'center',
     backgroundColor: '#24A0ED',
+    borderColor: '#fff',
     padding: 10,
     margin: 10,
   }
