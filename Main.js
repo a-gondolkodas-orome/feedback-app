@@ -127,9 +127,11 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontSize: 24,
     color: '#fff',
-    textAlign: "center"
+    textAlign: "center",
+    margin: 5,
   },
   eventTextStyle: {
+    margin: 5,
     marginTop: 40,
     fontSize: 36,
     color: '#d3d3d3',

@@ -6,7 +6,12 @@ import { Notifications } from 'expo';
 // SET_NAME {name}
 // ADD_QUESTION {id, data}
 // ADD_ANSWER {questionId, answer}
-// SHOW_QUESTION {id}
+// SHOW_NEXT_DUE_QUESTION
+// MAKE_QUESTION_DUE {questionId}
+// SET_QUESTION_SCHEDULE_TIME {questionId, timestamp}
+// SPINNER_ON
+// SPinner_OFF
+// LEAVE_EVENT
 // RESET
 
 const initialState = {

@@ -3,16 +3,6 @@ import '@firebase/firestore';
 import { store } from './reducers';
 import { Notifications } from 'expo';
 
-export function chooseQuestion() {
-  // Just show the first wordcloud question.
-  const ids = Object.keys(store.getState().questions);
-  for (const id of ids) {
-    const question = store.getState().questions[id];
-    if (question.data.type.startsWith("word")) {
-      store.dispatch({ type: 'SHOW_QUESTION', id: id });
-    }
-  }
-}
 
 export function loadQuestions() {
   const db = firebase.firestore();
@@ -29,7 +19,6 @@ export function loadQuestions() {
         }
       }
       scheduleAllLoadedQuestions();
-//      chooseQuestion();
     })
     .catch(function(error) {
       console.log("Error getting questions: ", error);
@@ -40,9 +29,9 @@ export function loadQuestions() {
 
 //const minTimeBetweenNotifications = 5 * 60 * 1000;
 const minTimeBetweenNotifications = 60 * 1000;
-const randomRangeMultiplier = 0.1;
+const randomRangeMultiplier = 0.2;
 
-function scheduleQuestionAroundTime(id, timestamp, range) {
+function scheduleQuestionAroundTime(questionId, timestamp, range) {
   const questions = store.getState().questions;
   let scheduleFor = -1;
   // Check already scheduled questions to group
@@ -58,20 +47,24 @@ function scheduleQuestionAroundTime(id, timestamp, range) {
   }
   if (scheduleFor == -1) {
     scheduleFor = timestamp + Math.floor((-1 + 2 * Math.random()) * range);
-    Notifications.scheduleLocalNotificationAsync({
-        title: 'Bejövő kérdés',
-        body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
-        ios: { sound: true },
-        android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
-      },
-      {
-        time: scheduleFor,
-      }
-    );
-    console.log("Notification set for: " + (new Date(scheduleFor).toISOString()))
+    if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
+      Notifications.scheduleLocalNotificationAsync({
+          title: 'Bejövő kérdés',
+          body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
+          ios: { sound: true },
+          android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
+        },
+        {
+          time: scheduleFor,
+        }
+      );
+      console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
+    }
   }
   
-  store.dispatch({ type: 'SET_QUESTION_SCHEDULE_TIME', questionId: id, timestamp: scheduleFor, });
+  if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
+    store.dispatch({ type: 'SET_QUESTION_SCHEDULE_TIME', questionId: questionId, timestamp: scheduleFor, });
+  }
 }
 
 function scheduleQuestionFromNow(id) {
@@ -83,9 +76,16 @@ function scheduleQuestionFromNow(id) {
 
 export function scheduleAllLoadedQuestions() {
   const ids = Object.keys(store.getState().questions);
+  let now = (new Date()).getTime();
   for (const id of ids) {
-    scheduleQuestionFromNow(id);
+    const question = store.getState().questions[id];
+    if (now >= question.data.from.seconds * 1000) {
+      store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
+    } else {
+      scheduleQuestionAroundTime(id, question.data.from.seconds * 1000, 0);
+    }
   }
+  store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
 }
 
 
