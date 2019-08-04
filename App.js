@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { AppState } from 'react-native';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import Main from './Main';
@@ -34,6 +35,28 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  state = {
+    appState: AppState.currentState,
+  };
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      store.dispatch({ type: 'SPINNER_OFF' });
+    }
+    this.setState({appState: nextAppState});
+  };
 
   render() {
     return (
