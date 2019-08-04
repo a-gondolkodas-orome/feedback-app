@@ -24,7 +24,7 @@ const initialState = {
   dueQuestionIds: [],
   questionToShow: "",
   name: "",
-  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.",
+  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.",
   spinner: false,
 }
 
@@ -51,7 +51,8 @@ export default function feedbackReducer(state = initialState, action) {
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       newState.questionToShow = "";
-      newState.noQuestionText = "Köszönjük eddigi válaszaidat. Majd küldünk értesítést, ha kapsz kitöltendő kérdést.";
+      newState.noQuestionText = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 
+                                "ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.";
       return newState;
     case 'SHOW_NEXT_DUE_QUESTION':
       if (state.dueQuestionIds.length === 0)
@@ -60,6 +61,7 @@ export default function feedbackReducer(state = initialState, action) {
         });
       else {
         newState = Object.assign({}, state);
+        newState.dueQuestionIds.sort((a, b) => newState.questions[a].data.order - newState.questions[b].data.order);
         let questionId = newState.dueQuestionIds.shift();
         console.log('Q to show: ' + questionId);
         return Object.assign(newState, {
@@ -105,4 +107,3 @@ const persistConfig = {
  const pReducer = persistReducer(persistConfig, feedbackReducer);
  export const store = createStore(pReducer);
  export const persistor = persistStore(store);
- 

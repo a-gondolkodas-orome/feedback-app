@@ -97,6 +97,7 @@ export function scheduleAllLoadedQuestions() {
   let now = (new Date()).getTime();
   for (const id of ids) {
     const question = store.getState().questions[id];
+    if (question.scheduleFor != null) continue;
     if (now >= question.data.from.seconds * 1000) {
       store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
     } else {
