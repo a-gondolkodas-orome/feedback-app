@@ -1,5 +1,8 @@
 import { createStore } from 'redux';
 import { Notifications } from 'expo';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 // Actions:
 // SET_EVENT {event}
@@ -15,12 +18,12 @@ import { Notifications } from 'expo';
 // RESET
 
 const initialState = {
-  eventId: "",
+  eventCode: "",
   event: null, // will be like this: { data: { name: "", }, },
   questions: {},
   dueQuestionIds: [],
   questionToShow: "",
-  name: "N Laci", // TODO: this is just for debugging, should be ""
+  name: "",
   noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.",
   spinner: false,
 }
@@ -31,7 +34,7 @@ export default function feedbackReducer(state = initialState, action) {
     case 'SET_EVENT':
       return Object.assign({}, state, {
         event: action.event,
-        eventId: action.event.id, // redundant, we can delete
+        eventCode: action.event.code, // redundant, but we want to retain it.
       });
     case 'SET_NAME':
       return Object.assign({}, state, {
@@ -82,7 +85,10 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'LEAVE_EVENT':
       Notifications.cancelAllScheduledNotificationsAsync();
-      return initialState;
+      newState = Object.assign({}, initialState);
+      newState.name = state.name;
+      newState.eventCode = state.eventCode;
+      return newState;
     case 'RESET':
       return initialState;
     default:
@@ -90,4 +96,13 @@ export default function feedbackReducer(state = initialState, action) {
   }
 }
 
-export const store = createStore(feedbackReducer);
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  stateReconciler: autoMergeLevel2
+ };
+
+ const pReducer = persistReducer(persistConfig, feedbackReducer);
+ export const store = createStore(pReducer);
+ export const persistor = persistStore(store);
+ 

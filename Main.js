@@ -65,7 +65,7 @@ class Main extends React.Component {
         </View>
       );
     }
-    else if (this.props.eventId != "") {
+    else if (this.props.event != null) {
       // TODO: this is almost same as above, try to refactor
       return (
         <View style={styles.container}>
@@ -80,7 +80,7 @@ class Main extends React.Component {
               style={styles.eventLeaveButton}
               onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}
             >
-              <Text style={{color:'#ff3030', fontSize: 30 }}>&times;</Text>
+              <Text style={{color:'#fff', fontSize: 20 }}>Kilépés a kísérletből</Text>
             </TouchableOpacity>
           </View>
           <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
@@ -104,7 +104,6 @@ class Main extends React.Component {
 
 const mapStateToProps = state => ({ 
   event: state.event,
-  eventId: state.eventId,
   questionToShow: state.questionToShow,
   spinner: state.spinner,
   noQuestionText: state.noQuestionText,
@@ -128,10 +127,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#fff',
     textAlign: "center",
-    margin: 5,
+    margin: 20,
   },
   eventTextStyle: {
-    margin: 5,
+    margin: 20,
     marginTop: 40,
     fontSize: 36,
     color: '#d3d3d3',
@@ -141,10 +140,10 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'center',
     borderWidth: 1,
-    borderColor:'rgba(255,255,255,0.2)',
-    width: 40,
-    height: 40,
-    backgroundColor:'#0e1c42',
+    borderColor:'rgba(255,255,255,0.5)',
+    width: 150,
+    height: 500,
+    backgroundColor:'#204096',
     color: '#fff',
     borderRadius: 20,
     marginTop: 40,

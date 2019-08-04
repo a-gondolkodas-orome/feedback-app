@@ -27,9 +27,25 @@ export function loadQuestions() {
     store.dispatch({ type: 'SPINNER_OFF' });
 }
 
-//const minTimeBetweenNotifications = 5 * 60 * 1000;
-const minTimeBetweenNotifications = 60 * 1000;
+//const minTimeBetweenNotifications = 60 * 1000;
+const minTimeBetweenNotifications = 5 * 60 * 1000;
+// TODO: consider moving this to question fields
 const randomRangeMultiplier = 0.2;
+const minHours = 9; // 9:00 is the first valid
+const maxHours = 22; // 22:59 is still valid
+
+// Schedule forward or backward during the night.
+function adjustTimeStamp(timestamp) {
+  let datetime = new Date(timestamp);
+  if (datetime.getHours() > maxHours) {
+    datetime.setHours(maxHours);
+    // don't change minutes
+  }
+  if (datetime.getHours < minHours) {
+    datetime.setHours(9);
+    // don't change minutes
+  }
+}
 
 function scheduleQuestionAroundTime(questionId, timestamp, range) {
   const questions = store.getState().questions;

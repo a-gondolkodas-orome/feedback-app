@@ -11,8 +11,9 @@ class Welcome extends React.Component {
 
   constructor(props) {
     super(props);
-    // Default values for easier debugging, they should be "" instead.
-    this.state = { code: "1337" };
+    // Default value for easier debugging, it should be "" instead.
+    // TODO: connect this instead with the eventCode in the store.
+    this.state = { code: "2019" };
   }
 
   render() {
@@ -20,7 +21,7 @@ class Welcome extends React.Component {
       <View style={styles.container}>
         <Text style={styles.label}>Feedback app</Text>
         <Text style={styles.label}>Kapcsolódás eseményhez</Text>
-        <Text style={styles.label}>A neved:</Text>
+        <Text style={styles.label}>A neved/jeligéd:</Text>
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
