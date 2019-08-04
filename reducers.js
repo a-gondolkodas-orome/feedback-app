@@ -42,6 +42,7 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'ADD_QUESTION':
       let entry = {};
+      console.log(action.data);
       entry[action.id] = { id: action.id, data: action.data, answerCount: 0, lastAnswerTime: null, scheduledFor: null, };
       return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)

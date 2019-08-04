@@ -37,14 +37,16 @@ const maxHours = 22; // 22:59 is still valid
 // Schedule forward or backward during the night.
 function adjustTimestamp(timestamp) {
   let datetime = new Date(timestamp);
+  // This is not exactly good, but will be just fine for now. TODO: implement it correctly
   if (datetime.getHours() > maxHours) {
     datetime.setHours(maxHours);
     // don't change minutes
   }
   if (datetime.getHours < minHours) {
-    datetime.setHours(9);
+    datetime.setHours(datetime.getHours + minHours);
     // don't change minutes
   }
+  return datetime.getTime();
 }
 
 function scheduleQuestionAroundTime(questionId, timestamp, range) {
