@@ -19,7 +19,7 @@ class Welcome extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={{height: 40, fontSize: 30, color: '#d3d3d3'}}>Feedback App</Text>
+        <Text style={{height: 30, fontSize: 24, color: '#d3d3d3'}}>Feedback App</Text>
         <Text style={styles.label}>Kapcsolódás eseményhez</Text>
         <Text style={styles.label}>A neved/jeligéd:</Text>
         <TextInput
@@ -118,18 +118,18 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   label: {
-    height: 40,
-    fontSize: 24,
+    height: 30,
+    fontSize: 20,
     color: '#fff',
-    marginTop: 20,
+    marginTop: 10,
   },
   textInput: {
-    height: 60,
+    height: 50,
     borderColor: '#0b1633',
     borderBottomColor: '#fff',
     color: '#fff',
     borderWidth: 1,
-    fontSize: 30,
+    fontSize: 28,
     minWidth: 150,
     textAlign: "center",
   },
