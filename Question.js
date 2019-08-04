@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { addAnswer } from './logic.js';
+import { store } from './reducers';
 
 
 class WordCloud extends React.Component {
@@ -19,7 +20,6 @@ class WordCloud extends React.Component {
 
     var wordComponents=[];
     let i=1;
-    console.log(this.props.question.questionObjectData);
     for (wordId in this.props.question.questionObjectData.words) {
       wordComponents.push(
         <WordButtonForWordCloudAnswer key={i} title={this.props.question.questionObjectData.words[wordId]}
@@ -56,7 +56,7 @@ class WordButtonForWordCloudAnswer extends React.Component {
         onPress={() => this.props.question.submitAnswer(this.props.title)}
       >
         <Text style={{
-          color: '#000',
+          color: '#fff',
           textAlign: 'center'
         }}>
         {this.props.title}</Text>
@@ -152,7 +152,7 @@ class CircularButtonForScaleAnswer extends React.Component {
         style={question_styles.circular_button}
         onPress={() => this.props.question.submitAnswer(this.props.title)}
       >
-        <Text style={{color:'#000'}}>{this.props.title}</Text>
+        <Text style={{color:'#fff'}}>{this.props.title}</Text>
       </TouchableOpacity>
     )
   }
@@ -175,6 +175,7 @@ class TextBox extends React.Component {
       <View style = {{
         flex: 1,
         flexDirection: 'column',
+        justifyContent: 'flex-start',
         alignItems: 'center',
       }}>
         <View style={question_styles.textbox_container} >
@@ -190,7 +191,7 @@ class TextBox extends React.Component {
           style={question_styles.textbox_button}
           onPress={() => this.props.question.submitAnswer(this.state.answer)}
         >
-          <Text style={{color:'#000'}}>Küld</Text>
+          <Text style={{color:'#fff'}}>Küld</Text>
         </TouchableOpacity>
         </View>
       </View>
@@ -208,6 +209,7 @@ class Question extends React.Component {
   }
 
   submitAnswer(answer) {
+    store.dispatch({ type: 'SPINNER_ON' });
     let answerObject = {
       answer: answer,
       // email: email,
@@ -225,11 +227,11 @@ class Question extends React.Component {
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
+          store.dispatch({ type: 'SPINNER_OFF' });
       });
   };
 
   render() {
-    console.log(this.questionObjectData);
     var questionComponentForType = (<Text>Ismeretlen kérdéstípus</Text>);
     if (this.questionObjectData.type == "scale5") {
       questionComponentForType = (<Scale5 question={this} />);
@@ -261,37 +263,41 @@ export default connect(mapStateToProps)(Question);
 const question_styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#0b1633',
+    color: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   question_text: {
-    marginTop: 100,
+    marginTop: 30,
     fontSize: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 50,
+    marginBottom: 20,
+    color: '#fff',
   },
   circular_button: {
     flex: 1,
     borderWidth:1,
-    borderColor:'rgba(0,0,0,0.2)',
+    borderColor:'rgba(255,255,255,0.2)',
     alignItems:'center',
     justifyContent:'center',
     width: 40,
     height: 40,
-    backgroundColor:'#fff',
+    backgroundColor:'#0e1c42',
+    color: '#fff',
     borderRadius: 20,
     margin: 5,
   },
   wordcloud_button: {
     borderWidth:1,
-    borderColor:'rgba(0,0,0,0.2)',
+    borderColor:'rgba(255,255,255,0.2)',
     alignItems:'center',
     justifyContent:'center',
     width: 150,
     padding: 8,
-    backgroundColor:'#fff',
+    backgroundColor:'#0e1c42',
+    color: '#fff',
     borderRadius: 20,
     margin: 5,
   },
@@ -313,14 +319,13 @@ const question_styles = StyleSheet.create({
     marginTop: 5,
   },
   textbox_container: {
-//    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   textbox: {
-//    flex: 1,
     borderWidth: 1,
-    borderColor: 'black',
+    borderColor: '#fff',
+    color: '#fff',
     width: 300,
     height: 80,
     justifyContent: 'center',
@@ -328,14 +333,14 @@ const question_styles = StyleSheet.create({
     margin: 20,
   },
   textbox_button: {
-//    flex: 1,
     borderWidth:1,
-    borderColor:'rgba(0,0,0,0.2)',
+    borderColor:'rgba(255,255,255,0.2)',
     alignItems:'center',
     justifyContent:'center',
     width: 100,
     height: 40,
-    backgroundColor:'#fff',
+    backgroundColor:'#0e1c42',
+    color: '#fff',
     borderRadius: 20,
     margin: 5,
   }

@@ -11,12 +11,13 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/kisfej.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/kisfej.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0b1633"
     },
+    "primaryColor": "#0b1633",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -24,7 +25,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "hu.agondolkodasorome.feedback",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "hu.agondolkodasorome.feedback"
     }
   }
 }
