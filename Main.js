@@ -74,15 +74,13 @@ class Main extends React.Component {
             textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
-          <View style={{flex: 0.2, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-            <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
-            <TouchableOpacity
-              style={styles.eventLeaveButton}
-              onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}
-            >
-              <Text style={{color:'#fff', fontSize: 20 }}>Kilépés a kísérletből</Text>
+          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
+          <TouchableOpacity
+            style={styles.eventLeaveButton}
+            onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}
+          >
+              <Text style={{color:'#fff', fontSize: 20, textAlign: 'center' }}>Kilépés a kísérletből</Text>
             </TouchableOpacity>
-          </View>
           <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
         </View>
       );
@@ -142,12 +140,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor:'rgba(255,255,255,0.5)',
     width: 150,
-    height: 500,
+    height: 50,
     backgroundColor:'#204096',
     color: '#fff',
     borderRadius: 20,
     marginTop: 40,
     marginLeft: 20,
+    textAlign: "center",
   }
 });
 

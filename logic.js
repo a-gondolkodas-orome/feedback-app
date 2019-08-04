@@ -35,7 +35,7 @@ const minHours = 9; // 9:00 is the first valid
 const maxHours = 22; // 22:59 is still valid
 
 // Schedule forward or backward during the night.
-function adjustTimeStamp(timestamp) {
+function adjustTimestamp(timestamp) {
   let datetime = new Date(timestamp);
   if (datetime.getHours() > maxHours) {
     datetime.setHours(maxHours);
@@ -49,6 +49,7 @@ function adjustTimeStamp(timestamp) {
 
 function scheduleQuestionAroundTime(questionId, timestamp, range) {
   const questions = store.getState().questions;
+  timestamp = adjustTimestamp(timestamp);
   let scheduleFor = -1;
   // Check already scheduled questions to group
   for (let id in questions) {
@@ -63,6 +64,7 @@ function scheduleQuestionAroundTime(questionId, timestamp, range) {
   }
   if (scheduleFor == -1) {
     scheduleFor = timestamp + Math.floor((-1 + 2 * Math.random()) * range);
+    scheduleFor = adjustTimestamp(scheduleFor);
     if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
       Notifications.scheduleLocalNotificationAsync({
           title: 'Bejövő kérdés',
