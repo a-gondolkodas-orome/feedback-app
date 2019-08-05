@@ -43,7 +43,7 @@ function adjustTimestamp(timestamp) {
     // don't change minutes
   }
   if (datetime.getHours < minHours) {
-    datetime.setHours(datetime.getHours + minHours);
+    datetime.setHours(datetime.getHours() + minHours);
     // don't change minutes
   }
   return datetime.getTime();
