@@ -105,6 +105,6 @@ const persistConfig = {
   stateReconciler: autoMergeLevel2
  };
 
- const pReducer = persistReducer(persistConfig, feedbackReducer);
- export const store = createStore(pReducer);
- export const persistor = persistStore(store);
+const pReducer = persistReducer(persistConfig, feedbackReducer);
+export const store = createStore(pReducer);
+export const persistor = persistStore(store);
