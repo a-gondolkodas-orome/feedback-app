@@ -1,5 +1,8 @@
 import { createStore } from 'redux';
 import { Notifications } from 'expo';
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 // Actions:
 // SET_EVENT {event}
@@ -15,13 +18,13 @@ import { Notifications } from 'expo';
 // RESET
 
 const initialState = {
-  eventId: "",
+  eventCode: "",
   event: null, // will be like this: { data: { name: "", }, },
   questions: {},
   dueQuestionIds: [],
   questionToShow: "",
-  name: "N Laci", // TODO: this is just for debugging, should be ""
-  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.",
+  name: "",
+  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.",
   spinner: false,
 }
 
@@ -31,7 +34,7 @@ export default function feedbackReducer(state = initialState, action) {
     case 'SET_EVENT':
       return Object.assign({}, state, {
         event: action.event,
-        eventId: action.event.id, // redundant, we can delete
+        eventCode: action.event.code, // redundant, but we want to retain it.
       });
     case 'SET_NAME':
       return Object.assign({}, state, {
@@ -39,6 +42,7 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'ADD_QUESTION':
       let entry = {};
+      console.log(action.data);
       entry[action.id] = { id: action.id, data: action.data, answerCount: 0, lastAnswerTime: null, scheduledFor: null, };
       return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)
@@ -48,7 +52,8 @@ export default function feedbackReducer(state = initialState, action) {
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       newState.questionToShow = "";
-      newState.noQuestionText = "Köszönjük eddigi válaszaidat. Majd küldünk értesítést, ha kapsz kitöltendő kérdést.";
+      newState.noQuestionText = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 
+                                "ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.";
       return newState;
     case 'SHOW_NEXT_DUE_QUESTION':
       if (state.dueQuestionIds.length === 0)
@@ -57,6 +62,7 @@ export default function feedbackReducer(state = initialState, action) {
         });
       else {
         newState = Object.assign({}, state);
+        newState.dueQuestionIds.sort((a, b) => newState.questions[a].data.order - newState.questions[b].data.order);
         let questionId = newState.dueQuestionIds.shift();
         console.log('Q to show: ' + questionId);
         return Object.assign(newState, {
@@ -82,7 +88,10 @@ export default function feedbackReducer(state = initialState, action) {
       });
     case 'LEAVE_EVENT':
       Notifications.cancelAllScheduledNotificationsAsync();
-      return initialState;
+      newState = Object.assign({}, initialState);
+      newState.name = state.name;
+      newState.eventCode = state.eventCode;
+      return newState;
     case 'RESET':
       return initialState;
     default:
@@ -90,4 +99,12 @@ export default function feedbackReducer(state = initialState, action) {
   }
 }
 
-export const store = createStore(feedbackReducer);
+const persistConfig = {
+  key: 'root',
+  storage: storage,
+  stateReconciler: autoMergeLevel2
+ };
+
+const pReducer = persistReducer(persistConfig, feedbackReducer);
+export const store = createStore(pReducer);
+export const persistor = persistStore(store);

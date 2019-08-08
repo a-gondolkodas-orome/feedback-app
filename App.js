@@ -1,14 +1,16 @@
 
 import React from 'react';
+import { AppState } from 'react-native';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import Main from './Main';
 import { Provider } from 'react-redux'
-import { store } from './reducers'
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { persistor, store } from './reducers'
 
+// The following code is just to disable some annoying warnings in expo.
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
-
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = _.clone(console);
 console.warn = message => {
@@ -34,10 +36,34 @@ export default class App extends React.Component {
     super(props);
   }
 
+  state = {
+    appState: AppState.currentState,
+  };
+
+  componentDidMount() {
+    AppState.addEventListener('change', this._handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this._handleAppStateChange);
+  }
+
+  _handleAppStateChange = (nextAppState) => {
+    if (
+      this.state.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      store.dispatch({ type: 'SPINNER_OFF' });
+    }
+    this.setState({appState: nextAppState});
+  };
+
   render() {
     return (
       <Provider store={store}>
-        <Main />
+        <PersistGate loading={null/*TODO: LoadingView*/} persistor={persistor}>
+          <Main />
+        </PersistGate>
       </Provider>
     );
   }

@@ -7,46 +7,57 @@ import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 class Main extends React.Component {
 
-    constructor(props) {
-      super(props);
-//      this.state = {
-//        notification: {},
-//      }
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    componentDidMount() {
-      registerForPushNotificationsAsync();
+  componentDidMount() {
+    registerForPushNotificationsAsync();
 
-      // Handle notifications that are received or selected while the app
-      // is open. If the app was closed and then opened by tapping the
-      // notification (rather than just tapping the app icon to open it),
-      // this function will fire on the next tick after the app starts
-      // with the notification data.
-      this._notificationSubscription = Notifications.addListener(this._handleNotification);
-    }
+    // Handle notifications that are received or selected while the app
+    // is open. If the app was closed and then opened by tapping the
+    // notification (rather than just tapping the app icon to open it),
+    // this function will fire on the next tick after the app starts
+    // with the notification data.
+    this._notificationSubscription = Notifications.addListener(this._handleNotification);
+  }
 
-    _handleNotification = (notification) => {
-      console.log(notification);
+  _handleNotification = (notification) => {
+    console.log(notification);
 
-      let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
+    let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
 
-      const ids = Object.keys(store.getState().questions);
-      for (const id of ids) {
-        const question = store.getState().questions[id];
-        if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
-          store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
-        }
-        else if (question.scheduledFor !== null) {
-          // debugging
-        }
+    const ids = Object.keys(store.getState().questions);
+    for (const id of ids) {
+      const question = store.getState().questions[id];
+      if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
+        store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
       }
+      else if (question.scheduledFor !== null) {
+        // debugging
+      }
+    }
 
-      if (store.getState().questionToShow === "")
-        store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
+    if (store.getState().questionToShow === "")
+      store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
+  };
 
+  _menu = null;
+
+  setMenuRef = ref => {
+    this._menu = ref;
+  };
+
+  hideMenu = () => {
+    this._menu.hide();
+  };
+
+  showMenu = () => {
+    this._menu.show();
   };
 
   render() {
@@ -65,24 +76,26 @@ class Main extends React.Component {
         </View>
       );
     }
-    else if (this.props.eventId != "") {
+    else if (this.props.event != null) {
       // TODO: this is almost same as above, try to refactor
       return (
         <View style={styles.container}>
+          <View style={{ alignSelf: 'flex-end', margin: 20, marginTop: 40 }}>
+            <Menu
+              ref={this.setMenuRef}
+              button={<Text onPress={this.showMenu} style={{color:'#fff', fontSize: 30}}>&#x2807;</Text>}
+            >
+              <MenuItem onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}>
+                Kilépés a kísérletből
+              </MenuItem>
+            </Menu>
+          </View>
           <Spinner
             visible={this.props.spinner}
             textContent={''}
             textStyle={styles.spinnerTextStyle}
           />
-          <View style={{flex: 0.2, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
-            <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
-            <TouchableOpacity
-              style={styles.eventLeaveButton}
-              onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}
-            >
-              <Text style={{color:'#ff3030', fontSize: 30 }}>&times;</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
           <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
         </View>
       );
@@ -104,7 +117,6 @@ class Main extends React.Component {
 
 const mapStateToProps = state => ({ 
   event: state.event,
-  eventId: state.eventId,
   questionToShow: state.questionToShow,
   spinner: state.spinner,
   noQuestionText: state.noQuestionText,
@@ -118,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   spinnerTextStyle: {
     color: '#fff'
@@ -128,27 +140,14 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#fff',
     textAlign: "center",
-    margin: 5,
+    margin: 20,
   },
   eventTextStyle: {
-    margin: 5,
+    margin: 20,
     marginTop: 40,
     fontSize: 36,
     color: '#d3d3d3',
     textAlign: "center"
   },
-  eventLeaveButton: {
-    alignItems:'center',
-    justifyContent:'center',
-    borderWidth: 1,
-    borderColor:'rgba(255,255,255,0.2)',
-    width: 40,
-    height: 40,
-    backgroundColor:'#0e1c42',
-    color: '#fff',
-    borderRadius: 20,
-    marginTop: 40,
-    marginLeft: 20,
-  }
 });
 

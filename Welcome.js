@@ -11,16 +11,17 @@ class Welcome extends React.Component {
 
   constructor(props) {
     super(props);
-    // Default values for easier debugging, they should be "" instead.
-    this.state = { code: "1337" };
+    // Default value for easier debugging, it should be "" instead.
+    // TODO: connect this instead with the eventCode in the store.
+    this.state = { code: "2019" };
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Feedback app</Text>
+        <Text style={{height: 30, fontSize: 24, color: '#d3d3d3'}}>Feedback App</Text>
         <Text style={styles.label}>Kapcsolódás eseményhez</Text>
-        <Text style={styles.label}>A neved:</Text>
+        <Text style={styles.label}>A neved/jeligéd:</Text>
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
@@ -117,17 +118,18 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   label: {
-    height: 40,
-    fontSize: 24,
+    height: 30,
+    fontSize: 20,
     color: '#fff',
+    marginTop: 10,
   },
   textInput: {
-    height: 60,
+    height: 50,
     borderColor: '#0b1633',
     borderBottomColor: '#fff',
     color: '#fff',
     borderWidth: 1,
-    fontSize: 30,
+    fontSize: 28,
     minWidth: 150,
     textAlign: "center",
   },
