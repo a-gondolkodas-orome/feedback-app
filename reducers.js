@@ -3,11 +3,9 @@ import { Notifications } from 'expo';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
+import * as actions from './actions';
 
 // Actions:
-// SET_EVENT {event}
-// SET_NAME {name}
-// ADD_QUESTION {id, data}
 // ADD_ANSWER {questionId, answer}
 // SHOW_NEXT_DUE_QUESTION
 // MAKE_QUESTION_DUE {questionId}
@@ -31,16 +29,16 @@ const initialState = {
 export default function feedbackReducer(state = initialState, action) {
   console.log(action.type);
   switch (action.type) {
-    case 'SET_EVENT':
+    case actions.SET_EVENT:
       return Object.assign({}, state, {
         event: action.event,
         eventCode: action.event.code, // redundant, but we want to retain it.
       });
-    case 'SET_NAME':
+    case actions.SET_NAME:
       return Object.assign({}, state, {
         name: action.name
       });
-    case 'ADD_QUESTION':
+    case actions.ADD_QUESTION:
       let entry = {};
       console.log(action.data);
       entry[action.id] = { id: action.id, data: action.data, answerCount: 0, lastAnswerTime: null, scheduledFor: null, };

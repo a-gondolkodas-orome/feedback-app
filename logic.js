@@ -1,7 +1,8 @@
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import { store } from './reducers';
 import { Notifications } from 'expo';
+import { store } from './reducers';
+import { addQuestion } from './actions'
 
 
 export function loadQuestions() {
@@ -15,7 +16,7 @@ export function loadQuestions() {
       }
       for (const doc of querySnapshot.docs) {
         if (! (doc.id in store.getState().questions)) {
-          store.dispatch({ type: 'ADD_QUESTION', id: doc.id, data: doc.data(), });
+          store.dispatch(addQuestion(doc.id, doc.data));
         }
       }
       scheduleAllLoadedQuestions();
