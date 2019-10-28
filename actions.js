@@ -30,7 +30,30 @@ export function addQuestion(id, data) {
   return { type: ADD_QUESTION, id, data }
 }
 
-export function makeQuestionDue(id) {
-  return { type: MAKE_QUESTION_DUE, id }
+export function addAnswer(questionId, answer) {
+  return { type: ADD_ANSWER, questionId, answer }
 }
 
+export function showNextDueQuestion() {
+  return { type: SHOW_NEXT_DUE_QUESTION }
+}
+
+export function makeQuestionDue(questionId) {
+  return { type: MAKE_QUESTION_DUE, questionId }
+}
+
+export function setQuestionScheduleTime(questionId, timestamp) {
+  return { type: ADD_ANSWER, questionId, timestamp }
+}
+
+export function spinnerOn() {
+  return { type: SPINNER_ON }
+}
+
+export function spinnerOff() {
+  return { type: SPINNER_OFF }
+}
+
+export function leaveEvent() {
+  return { type: LEAVE_EVENT }
+}

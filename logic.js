@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { Notifications } from 'expo';
 import { store } from './reducers';
-import { addQuestion } from './actions'
+import { addQuestion, addAnswer, showNextDueQuestion, makeQuestionDue, setQuestionScheduleTime, spinnerOff } from './actions'
 
 
 export function loadQuestions() {
@@ -25,7 +25,7 @@ export function loadQuestions() {
       console.log("Error getting questions: ", error);
       // TODO: display error
     });
-    store.dispatch({ type: 'SPINNER_OFF' });
+    store.dispatch(spinnerOff());
 }
 
 //const minTimeBetweenNotifications = 60 * 1000;
@@ -84,7 +84,7 @@ function scheduleQuestionAroundTime(questionId, timestamp, range) {
   }
   
   if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
-    store.dispatch({ type: 'SET_QUESTION_SCHEDULE_TIME', questionId: questionId, timestamp: scheduleFor, });
+    store.dispatch(setQuestionScheduleTime(questionId, scheduleFor));
   }
 }
 
@@ -102,20 +102,20 @@ export function scheduleAllLoadedQuestions() {
     const question = store.getState().questions[id];
     if (question.scheduleFor != null) continue;
     if (now >= question.data.from.seconds * 1000) {
-      store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
+      store.dispatch(makeQuestionDue(id));
     } else {
       scheduleQuestionAroundTime(id, question.data.from.seconds * 1000, 0);
     }
   }
-  store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
+  store.dispatch(showNextDueQuestion());
 }
 
 
-export function addAnswer(questionId, answer) {
-  store.dispatch({ type: 'ADD_ANSWER', questionId: questionId, answer: answer, });
+export function saveAnswer(questionId, answer) {
+  store.dispatch(addAnswer(questionId, answer));
   Notifications.dismissAllNotificationsAsync();
   scheduleQuestionFromNow(questionId);
   // After adding the answer we should display the next due question
-  store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
-  store.dispatch({ type: 'SPINNER_OFF' });
+  store.dispatch(showNextDueQuestion());
+  store.dispatch(spinnerOff());
 }

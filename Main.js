@@ -8,6 +8,7 @@ import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
+import { showNextDueQuestion, makeQuestionDue, leaveEvent } from './actions';
 
 class Main extends React.Component {
 
@@ -35,7 +36,7 @@ class Main extends React.Component {
     for (const id of ids) {
       const question = store.getState().questions[id];
       if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
-        store.dispatch({ type: 'MAKE_QUESTION_DUE', questionId: id });
+        store.dispatch(makeQuestionDue(id));
       }
       else if (question.scheduledFor !== null) {
         // debugging
@@ -43,7 +44,7 @@ class Main extends React.Component {
     }
 
     if (store.getState().questionToShow === "")
-      store.dispatch({ type: 'SHOW_NEXT_DUE_QUESTION' });
+      store.dispatch(showNextDueQuestion());
   };
 
   _menu = null;
@@ -88,7 +89,7 @@ class Main extends React.Component {
               ref={this.setMenuRef}
               button={<Text onPress={this.showMenu} style={styles.menuDotsStyle}>&#x2807;</Text>}
             >
-              <MenuItem onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}>
+              <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 Kilépés a kísérletből
               </MenuItem>
             </Menu>
