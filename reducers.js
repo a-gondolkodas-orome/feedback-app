@@ -100,7 +100,8 @@ export default function feedbackReducer(state = initialState, action) {
 const persistConfig = {
   key: 'root',
   storage: storage,
-  stateReconciler: autoMergeLevel2
+  stateReconciler: autoMergeLevel2,
+  blacklist : ['spinner']
  };
 
 const pReducer = persistReducer(persistConfig, feedbackReducer);

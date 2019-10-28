@@ -6,8 +6,8 @@ import Question from './Question'
 import { store } from './reducers';
 import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
+import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 
 class Main extends React.Component {
 
@@ -61,55 +61,45 @@ class Main extends React.Component {
   };
 
   render() {
-    if (this.props.questionToShow != "") {
+    // TODO: use navigation instead of this if.
+    if (this.props.event == null) {
       return (
         <View style={styles.container}>
-          <Spinner
-            visible={this.props.spinner}
-            textContent={''}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
-          <Question
+        <Spinner
+          visible={this.props.spinner}
+          cancelable={true}
+        />
+          <Welcome
             store={store}
           />
         </View>
       );
     }
-    else if (this.props.event != null) {
-      // TODO: this is almost same as above, try to refactor
-      return (
-        <View style={styles.container}>
-          <View style={{ alignSelf: 'flex-end', margin: 20, marginTop: 40 }}>
+    let innerComponent = (<Text style={styles.textStyle}>{this.props.noQuestionText}</Text>);
+    if (this.props.questionToShow != "") {
+      innerComponent = (<Question store={store}/>);
+    }
+    return (
+      <View style={styles.container}>
+        <View style={{ alignSelf: 'stretch', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 10, marginTop: 40 }}>
+          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
+          <View style={{position: 'absolute', right: 5 }}>
             <Menu
               ref={this.setMenuRef}
-              button={<Text onPress={this.showMenu} style={{color:'#fff', fontSize: 30}}>&#x2807;</Text>}
+              button={<Text onPress={this.showMenu} style={styles.menuDotsStyle}>&#x2807;</Text>}
             >
               <MenuItem onPress={() => store.dispatch({ type: "LEAVE_EVENT" })}>
                 Kilépés a kísérletből
               </MenuItem>
             </Menu>
           </View>
-          <Spinner
-            visible={this.props.spinner}
-            textContent={''}
-            textStyle={styles.spinnerTextStyle}
-          />
-          <Text style={styles.eventTextStyle}>{this.props.event.data.name}</Text>
-          <Text style={styles.textStyle}>{this.props.noQuestionText}</Text>
         </View>
-      );
-    }
-    return (
-      <View style={styles.container}>
         <Spinner
-            visible={this.props.spinner}
-            textContent={''}
-            textStyle={styles.spinnerTextStyle}
-          />
-        <Welcome
-          store={store}
+          visible={this.props.spinner}
+          cancelable={true}
         />
+
+        {innerComponent}
       </View>
     );
   }
@@ -132,9 +122,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
-  spinnerTextStyle: {
-    color: '#fff'
-  },
   textStyle: {
     marginTop: 30,
     fontSize: 24,
@@ -143,11 +130,14 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   eventTextStyle: {
-    margin: 20,
-    marginTop: 40,
-    fontSize: 36,
+    margin: 10,
+    fontSize: 30,
     color: '#d3d3d3',
     textAlign: "center"
+  },
+  menuDotsStyle: {
+    color:'#fff',
+    fontSize: 30
   },
 });
 
