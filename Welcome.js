@@ -6,6 +6,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { loadQuestions } from './logic';
 import { store } from './reducers';
+import { setEvent, setName, spinnerOff } from './actions';
 
 class Welcome extends React.Component {
 
@@ -25,7 +26,7 @@ class Welcome extends React.Component {
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
-          onChangeText={(text) => store.dispatch({ type: 'SET_NAME', name: text})}
+          onChangeText={(text) => store.dispatch(setName(text))}
           value={this.props.name}
           autoCapitalize="words"
           autoCorrect={false}
@@ -62,7 +63,7 @@ class Welcome extends React.Component {
       return;
     }
 
-    store.dispatch({ type: 'SPINNER_ON' });
+    store.dispatch(spinnerOff());
 
     // TODO: move the below code to logic.js with some error returned.
     const db = firebase.firestore();
@@ -76,7 +77,7 @@ class Welcome extends React.Component {
           // TODO: maybe display error message
           welcome.setState({code: ""});
           welcome.codeTextInput.focus();
-          store.dispatch({ type: 'SPINNER_OFF' });
+          store.dispatch(spinnerOff());
           return;
         }
         if (querySnapshot.size < 1) {
@@ -88,13 +89,13 @@ class Welcome extends React.Component {
         }
         let event = { id: querySnapshot.docs[0].id, data: querySnapshot.docs[0].data() };
         console.log("Selected event: ", event);
-        store.dispatch({ type: 'SET_EVENT', event: event });
+        store.dispatch(setEvent(event));
         loadQuestions();
       })
       .catch(function(error) {
         console.log("Error getting event: ", error);
         // TODO: display error
-        store.dispatch({ type: 'SPINNER_OFF' });
+        store.dispatch(spinnerOff());
     });
   }
 }

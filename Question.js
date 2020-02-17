@@ -4,8 +4,9 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import { addAnswer } from './logic.js';
+import { saveAnswer } from './logic.js';
 import { store } from './reducers';
+import { spinnerOn, spinnerOff } from './actions.js';
 
 
 class WordCloud extends React.Component {
@@ -209,7 +210,7 @@ class Question extends React.Component {
   }
 
   submitAnswer(answer) {
-    store.dispatch({ type: 'SPINNER_ON' });
+    store.dispatch(spinnerOn());
     let answerObject = {
       answer: answer,
       // email: email,
@@ -223,11 +224,11 @@ class Question extends React.Component {
       .add(answerObject)
       .then(function(docRef) {
           console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
-          addAnswer(questionId, answerObject);
+          saveAnswer(questionId, answerObject);
       })
       .catch(function(error) {
           console.error("Error adding document: ", error);
-          store.dispatch({ type: 'SPINNER_OFF' });
+          store.dispatch(spinnerOff());
       });
   };
 

@@ -11,6 +11,7 @@ import { persistor, store } from './reducers'
 // The following code is just to disable some annoying warnings in expo.
 import { YellowBox } from 'react-native';
 import _ from 'lodash';
+import { spinnerOff } from './actions';
 YellowBox.ignoreWarnings(['Setting a timer']);
 const _console = _.clone(console);
 console.warn = message => {
@@ -53,7 +54,7 @@ export default class App extends React.Component {
       this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      store.dispatch({ type: 'SPINNER_OFF' });
+      store.dispatch(spinnerOff());
     }
     this.setState({appState: nextAppState});
   };
