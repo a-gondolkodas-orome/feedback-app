@@ -23,7 +23,7 @@
 
 ## Adatbázis, esemény, kérdések hozzáadása
 
-* Fejlesztés alatt van egy admin weboldal
+* Fejlesztés alatt van egy [admin weboldal](https://github.com/a-gondolkodas-orome/feedback-app-export)
 * Jelenleg a Cloud Firestore console-on lehet szerkeszteni az adatokat (események, kérdések), és vizsgálni a válaszokat: https://console.firebase.google.com/project/feedback-app-ago/database
 
 ### DB Séma
