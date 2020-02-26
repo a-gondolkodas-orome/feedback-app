@@ -4,15 +4,17 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import * as actions from './actions';
+import * as strings from './strings';
 
 const initialState = {
   eventCode: "",
   event: null, // will be like this: { data: { name: "", }, },
-  questions: {},
+  questions: {}, // map from question id to question data like this: 
+                 // { id: "...", data: <data in firestore>, answerCount: 0, lastAnswerTime: null, };
   dueQuestionIds: [],
   questionToShow: "",
   name: "",
-  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.",
+  noQuestionText: strings.INITIAL_TEXT,
   spinner: false,
 }
 
@@ -40,8 +42,7 @@ export default function feedbackReducer(state = initialState, action) {
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       newState.questionToShow = "";
-      newState.noQuestionText = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 
-                                "ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.";
+      newState.noQuestionText = strings.THANK_YOU_TEXT;
       return newState;
     case actions.SHOW_NEXT_DUE_QUESTION:
       if (state.dueQuestionIds.length === 0)
