@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { Notifications } from 'expo';
 import { store } from './reducers';
-import { addQuestion, addAnswer, showNextDueQuestion, makeQuestionDue, setQuestionScheduleTime, spinnerOff } from './actions'
+import { addQuestion, addAnswer, spinnerOff, clearQuestions, showFirst } from './actions'
 
 
 export function loadQuestions() {
@@ -14,12 +14,18 @@ export function loadQuestions() {
         console.log("Did not find questions for event: " + eventRef.path);
         return;
       }
-      for (const doc of querySnapshot.docs) {
-        if (! (doc.id in store.getState().questions)) {
-          store.dispatch(addQuestion(doc.id, doc.data));
-        }
+      store.dispatch(clearQuestions());
+      questions = new Array();
+      for (let i = 0; i < querySnapshot.docs.length; i++) {
+        const doc = querySnapshot.docs[i];
+        questions.push({id: doc.id, data: doc.data()});
       }
-      scheduleAllLoadedQuestions();
+      questions.sort((a, b) => a.data.order - b.data.order);
+      for (let i = 0; i < questions.length; i++) {
+        const next = (i + 1 < questions.length ? questions[i + 1].id : "");
+        store.dispatch(addQuestion(questions[i].id, questions[i].data, i, next));
+      }
+      store.dispatch(showFirst());
     })
     .catch(function(error) {
       console.log("Error getting questions: ", error);
@@ -28,94 +34,30 @@ export function loadQuestions() {
     store.dispatch(spinnerOff());
 }
 
-//const minTimeBetweenNotifications = 60 * 1000;
-const minTimeBetweenNotifications = 5 * 60 * 1000;
-// TODO: consider moving this to question fields
-const randomRangeMultiplier = 0.2;
-const minHours = 9; // 9:00 is the first valid
-const maxHours = 22; // 22:59 is still valid
-
-// Schedule forward or backward during the night.
-function adjustTimestamp(timestamp) {
-  let datetime = new Date(timestamp);
-  // This is not exactly good, but will be just fine for now. TODO: implement it correctly
-  if (datetime.getHours() > maxHours) {
-    datetime.setHours(maxHours);
-    // don't change minutes
+export function saveAnswer(questionId, answer) {
+  store.dispatch(addAnswer(questionId, answer));
+  if (questionId == store.getState().firstQuestion) {
+    Notifications.dismissAllNotificationsAsync();
+    scheduleNotification(questionId);
   }
-  if (datetime.getHours() < minHours) {
-    datetime.setHours(datetime.getHours() + minHours);
-    // don't change minutes
-  }
-  return datetime.getTime();
+  store.dispatch(spinnerOff());
 }
 
-function scheduleQuestionAroundTime(questionId, timestamp, range) {
-  const questions = store.getState().questions;
-  timestamp = adjustTimestamp(timestamp);
-  let scheduleFor = -1;
-  // Check already scheduled questions to group
-  for (let id in questions) {
-    // skip loop if the property is from prototype
-    if (!questions.hasOwnProperty(id)) continue;
-    let question = questions[id];
-    if (question.scheduledFor != null && Math.abs(timestamp - question.scheduledFor) <
-        Math.max(range, minTimeBetweenNotifications)) {
-      scheduleFor = question.scheduledFor;
-      break;
-    }
-  }
-  if (scheduleFor == -1) {
-    scheduleFor = timestamp + Math.floor((-1 + 2 * Math.random()) * range);
-    scheduleFor = adjustTimestamp(scheduleFor);
-    if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
-      Notifications.scheduleLocalNotificationAsync({
-          title: 'Bejövő kérdés',
-          body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
-          ios: { sound: true },
-          android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
-        },
-        {
-          time: scheduleFor,
-        }
-      );
-      console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
-    }
-  }
-  
-  if (scheduleFor / 1000 < questions[questionId].data.until.seconds) {
-    store.dispatch(setQuestionScheduleTime(questionId, scheduleFor));
-  }
-}
-
-function scheduleQuestionFromNow(id) {
+function scheduleNotification(id) {
   let now = (new Date()).getTime();
   const question = store.getState().questions[id];
   const freq = 60 * 1000 * question.data.frequency;
-  scheduleQuestionAroundTime(question.id, now + freq, randomRangeMultiplier * freq);
-}
 
-export function scheduleAllLoadedQuestions() {
-  const ids = Object.keys(store.getState().questions);
-  let now = (new Date()).getTime();
-  for (const id of ids) {
-    const question = store.getState().questions[id];
-    if (question.scheduleFor != null) continue;
-    if (now >= question.data.from.seconds * 1000) {
-      store.dispatch(makeQuestionDue(id));
-    } else {
-      scheduleQuestionAroundTime(id, question.data.from.seconds * 1000, 0);
+  scheduleFor = now + Math.floor(freq * (0.9 + 0.2 * Math.random())); // 10% random
+  Notifications.scheduleLocalNotificationAsync({
+      title: 'Bejövő kérdés',
+      body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
+      ios: { sound: true },
+      android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
+    },
+    {
+      time: scheduleFor,
     }
-  }
-  store.dispatch(showNextDueQuestion());
-}
-
-
-export function saveAnswer(questionId, answer) {
-  store.dispatch(addAnswer(questionId, answer));
-  Notifications.dismissAllNotificationsAsync();
-  scheduleQuestionFromNow(questionId);
-  // After adding the answer we should display the next due question
-  store.dispatch(showNextDueQuestion());
-  store.dispatch(spinnerOff());
+  );
+  console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
 }

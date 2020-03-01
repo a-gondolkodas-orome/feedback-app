@@ -14,7 +14,7 @@ class Welcome extends React.Component {
     super(props);
     // Default value for easier debugging, it should be "" instead.
     // TODO: connect this instead with the eventCode in the store.
-    this.state = { code: "2019" };
+    this.state = { code: "1111" };
   }
 
   render() {

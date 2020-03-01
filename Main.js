@@ -8,7 +8,7 @@ import { Notifications } from 'expo';
 import { registerForPushNotificationsAsync } from './notif';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { showNextDueQuestion, makeQuestionDue, leaveEvent } from './actions';
+import { showNextDueQuestion, makeQuestionDue, leaveEvent, showFirst } from './actions';
 
 class Main extends React.Component {
 
@@ -30,21 +30,12 @@ class Main extends React.Component {
   _handleNotification = (notification) => {
     console.log(notification);
 
-    let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
-
-    const ids = Object.keys(store.getState().questions);
-    for (const id of ids) {
-      const question = store.getState().questions[id];
-      if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
-        store.dispatch(makeQuestionDue(id));
-      }
-      else if (question.scheduledFor !== null) {
-        // debugging
-      }
+    let now = new Date();
+    const firstQuestionData = store.getState().questions[store.getState().firstQuestion];
+    if (store.getState().questionToShow == "" || (now - firstQuestionData.lastAnswerTime) / 1000 > 0.5 * firstQuestionData.data.frequency * 60) {
+      store.dispatch(showFirst());
     }
 
-    if (store.getState().questionToShow === "")
-      store.dispatch(showNextDueQuestion());
   };
 
   _menu = null;
