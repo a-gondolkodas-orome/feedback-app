@@ -50,6 +50,10 @@ function scheduleNotification(id) {
   const question = store.getState().questions[id];
   const freq = 60 * 1000 * question.data.frequency;
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
+  if (scheduleFor > question.until.seconds * 1000) {
+    // Past the end of event.
+    return;
+  }
 
   Notifications.scheduleLocalNotificationAsync({
       title: strings.NOTIFICATION_TITLE,
