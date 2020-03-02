@@ -1,14 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
 import { store } from './reducers';
-import { Notifications } from 'expo';
-import { registerForPushNotificationsAsync } from './notif';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { showNextDueQuestion, makeQuestionDue, leaveEvent, showFirst } from './actions';
+import { leaveEvent } from './actions';
+import * as strings from './strings';
 
 class Main extends React.Component {
 
@@ -17,26 +16,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    registerForPushNotificationsAsync();
-
-    // Handle notifications that are received or selected while the app
-    // is open. If the app was closed and then opened by tapping the
-    // notification (rather than just tapping the app icon to open it),
-    // this function will fire on the next tick after the app starts
-    // with the notification data.
-    this._notificationSubscription = Notifications.addListener(this._handleNotification);
   }
-
-  _handleNotification = (notification) => {
-    console.log(notification);
-
-    let now = new Date();
-    const firstQuestionData = store.getState().questions[store.getState().firstQuestion];
-    if (store.getState().questionToShow == "" || (now - firstQuestionData.lastAnswerTime) / 1000 > 0.5 * firstQuestionData.data.frequency * 60) {
-      store.dispatch(showFirst());
-    }
-
-  };
 
   _menu = null;
 
@@ -81,7 +61,7 @@ class Main extends React.Component {
               button={<Text onPress={this.showMenu} style={styles.menuDotsStyle}>&#x2807;</Text>}
             >
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
-                Kilépés a kísérletből
+                {strings.EXIT_TEXT}
               </MenuItem>
             </Menu>
           </View>

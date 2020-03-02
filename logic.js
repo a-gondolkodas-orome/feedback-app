@@ -3,7 +3,7 @@ import '@firebase/firestore';
 import { Notifications } from 'expo';
 import { store } from './reducers';
 import { addQuestion, addAnswer, spinnerOff, clearQuestions, showFirst } from './actions'
-
+import * as strings from './strings';
 
 export function loadQuestions() {
   const db = firebase.firestore();
@@ -44,19 +44,22 @@ export function saveAnswer(questionId, answer) {
 }
 
 function scheduleNotification(id) {
+  // Cancel all active ones.
+  Notifications.cancelAllScheduledNotificationsAsync();
   let now = (new Date()).getTime();
   const question = store.getState().questions[id];
   const freq = 60 * 1000 * question.data.frequency;
+  scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
 
-  scheduleFor = now + Math.floor(freq * (0.9 + 0.2 * Math.random())); // 10% random
   Notifications.scheduleLocalNotificationAsync({
-      title: 'Bejövő kérdés',
-      body: 'Új kérdésed érkezett! Próbálj minél hamarabb válaszolni rá, csak pár másodpercet vesz igénybe.',
+      title: strings.NOTIFICATION_TITLE,
+      body: strings.NOTIFICATION_TEXT,
       ios: { sound: true },
       android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
     },
     {
       time: scheduleFor,
+      repeat: 'minute'
     }
   );
   console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
