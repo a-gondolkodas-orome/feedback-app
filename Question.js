@@ -7,6 +7,7 @@ import '@firebase/firestore';
 import { saveAnswer } from './logic.js';
 import { store } from './reducers';
 import { spinnerOn, spinnerOff } from './actions.js';
+import * as strings from './strings';
 
 
 class WordCloud extends React.Component {
@@ -206,7 +207,6 @@ class Question extends React.Component {
 
   constructor(props) {
     super(props);
-    this.questionObjectData = this.props.questions[this.props.id].data;
   }
 
   submitAnswer(answer) {
@@ -233,7 +233,9 @@ class Question extends React.Component {
   };
 
   render() {
-    var questionComponentForType = (<Text>Ismeretlen kérdéstípus</Text>);
+    console.log("Q: " + this.props.id);
+    this.questionObjectData = this.props.questions[this.props.id].data;
+    var questionComponentForType = (<Text style={question_styles.question_text}>{strings.UNKNOWN_QUESTION}</Text>);
     if (this.questionObjectData.type == "scale5") {
       questionComponentForType = (<Scale5 question={this} />);
     } else if (this.questionObjectData.type == "scale10") {

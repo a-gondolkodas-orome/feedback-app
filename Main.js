@@ -1,14 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
 import { store } from './reducers';
-import { Notifications } from 'expo';
-import { registerForPushNotificationsAsync } from './notif';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { showNextDueQuestion, makeQuestionDue, leaveEvent } from './actions';
+import { leaveEvent } from './actions';
+import * as strings from './strings';
 
 class Main extends React.Component {
 
@@ -17,35 +16,7 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
-    registerForPushNotificationsAsync();
-
-    // Handle notifications that are received or selected while the app
-    // is open. If the app was closed and then opened by tapping the
-    // notification (rather than just tapping the app icon to open it),
-    // this function will fire on the next tick after the app starts
-    // with the notification data.
-    this._notificationSubscription = Notifications.addListener(this._handleNotification);
   }
-
-  _handleNotification = (notification) => {
-    console.log(notification);
-
-    let timestamp = (new Date()).getTime() + 1000; // rejtelyes modon lehet hogy ez hamarabbi mint a notification timestamp-je!? ezert a +1000ms
-
-    const ids = Object.keys(store.getState().questions);
-    for (const id of ids) {
-      const question = store.getState().questions[id];
-      if ((question.scheduledFor !== null) && (question.scheduledFor <= timestamp)) {
-        store.dispatch(makeQuestionDue(id));
-      }
-      else if (question.scheduledFor !== null) {
-        // debugging
-      }
-    }
-
-    if (store.getState().questionToShow === "")
-      store.dispatch(showNextDueQuestion());
-  };
 
   _menu = null;
 
@@ -90,7 +61,7 @@ class Main extends React.Component {
               button={<Text onPress={this.showMenu} style={styles.menuDotsStyle}>&#x2807;</Text>}
             >
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
-                Kilépés a kísérletből
+                {strings.EXIT_TEXT}
               </MenuItem>
             </Menu>
           </View>

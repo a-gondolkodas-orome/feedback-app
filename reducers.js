@@ -4,15 +4,21 @@ import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import * as actions from './actions';
+import * as strings from './strings';
 
 const initialState = {
   eventCode: "",
   event: null, // will be like this: { data: { name: "", }, },
-  questions: {},
-  dueQuestionIds: [],
+  questions: {}, // map from question id to question data like this: 
+                 // { id: "...",
+                 //   data: <data in firestore>,
+                 //   next: <next question id>
+                 //   answerCount: 0,
+                 //   lastAnswerTime: null, };
+  firstQuestion: "",
   questionToShow: "",
   name: "",
-  noQuestionText: "Majd küldünk értesítést, ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.",
+  noQuestionText: strings.INITIAL_TEXT,
   spinner: false,
 }
 
@@ -28,44 +34,33 @@ export default function feedbackReducer(state = initialState, action) {
       return Object.assign({}, state, {
         name: action.name
       });
+    case actions.CLEAR_QUESTIONS:
+      return Object.assign({}, state, {
+        questions: {}
+      });
     case actions.ADD_QUESTION:
       let entry = {};
-      console.log(action.data);
-      entry[action.id] = { id: action.id, data: action.data, answerCount: 0, lastAnswerTime: null, scheduledFor: null, };
-      return Object.assign({}, state, {
+      entry[action.id] = { id: action.id, data: action.data, next: action.next, answerCount: 0, lastAnswerTime: null, };
+      console.log(entry);
+      if (action.index == 0)
+        return Object.assign({}, state, {
+          questions: Object.assign({}, state.questions, entry),
+          firstQuestion: action.id
+        });
+      else return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)
       });
     case actions.ADD_ANSWER:
       let newState = Object.assign({}, state);
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
-      newState.questionToShow = "";
-      newState.noQuestionText = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 
-                                "ha kapsz kitöltendő kérdést.\nMost nyugodtan elhagyhatod az applikációt a home gombbal.";
+      newState.questionToShow = state.questions[state.questionToShow].next;
+      newState.noQuestionText = strings.THANK_YOU_TEXT;
       return newState;
-    case actions.SHOW_NEXT_DUE_QUESTION:
-      if (state.dueQuestionIds.length === 0)
-        return Object.assign({}, state, {
-          questionToShow: "", // restore to show <no question> page 
-        });
-      else {
-        newState = Object.assign({}, state);
-        newState.dueQuestionIds.sort((a, b) => newState.questions[a].data.order - newState.questions[b].data.order);
-        let questionId = newState.dueQuestionIds.shift();
-        console.log('Q to show: ' + questionId);
-        return Object.assign(newState, {
-          questionToShow: questionId,
-        });
-      }
-    case actions.MAKE_QUESTION_DUE:
-      newState = Object.assign({}, state);
-      newState.questions[action.questionId].scheduledFor = null;
-      newState.dueQuestionIds.push(action.questionId);
-      return newState;
-    case actions.SET_QUESTION_SCHEDULE_TIME:
-      newState = Object.assign({}, state);
-      newState.questions[action.questionId].scheduledFor = action.timestamp;
-      return newState;
+    case actions.SHOW_FIRST:
+      return Object.assign({}, state, {
+        questionToShow: state.firstQuestion
+      });
     case actions.SPINNER_ON:
       return Object.assign({}, state, {
         spinner: true
