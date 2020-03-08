@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { Notifications } from 'expo';
 import { store } from './reducers';
-import { addQuestion, addAnswer, spinnerOff, clearQuestions, showFirst, changeText } from './actions'
+import * as actions from './actions'
 import * as strings from './strings';
 
 export function loadQuestions() {
@@ -14,7 +14,7 @@ export function loadQuestions() {
         console.log("Did not find questions for event: " + eventRef.path);
         return;
       }
-      store.dispatch(clearQuestions());
+      store.dispatch(actions.clearQuestions());
       questions = new Array();
       for (let i = 0; i < querySnapshot.docs.length; i++) {
         const doc = querySnapshot.docs[i];
@@ -23,31 +23,47 @@ export function loadQuestions() {
       questions.sort((a, b) => a.data.order - b.data.order);
       for (let i = 0; i < questions.length; i++) {
         const next = (i + 1 < questions.length ? questions[i + 1].id : "");
-        store.dispatch(addQuestion(questions[i].id, questions[i].data, i, next));
+        store.dispatch(actions.addQuestion(questions[i].id, questions[i].data, i, next));
       }
       let now = (new Date()).getTime();
       if (now < store.getState().event.data.from.seconds * 1000) {
         console.log("Event hasn't started, we will schedule a notification to the start.");
-        store.dispatch(changeText(strings.EVENT_LATER_TEXT));
+        store.dispatch(actions.changeText(strings.EVENT_LATER_TEXT));
         scheduleNotification();
       } else {
-        store.dispatch(showFirst());
+        store.dispatch(actions.showFirst());
       }
     })
     .catch(function(error) {
       console.log("Error getting questions: ", error);
-      store.dispatch(changeText(strings.ERROR_TEXT));
+      store.dispatch(actions.changeText(strings.ERROR_TEXT));
     });
-    store.dispatch(spinnerOff());
+    store.dispatch(actions.spinnerOff());
 }
 
-export function saveAnswer(questionId, answer) {
-  store.dispatch(addAnswer(questionId, answer));
+export function saveAnswer(questionId, answerObject) {
+  store.dispatch(actions.spinnerOn());
+  const db = firebase.firestore();
+  db.collection("events").doc(store.getState().event.id).collection("questions")
+    .doc(questionId).collection('answers')
+    .add(answerObject)
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
+        handleAnswer(questionId, answerObject);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+        store.dispatch(actions.spinnerOff());
+    });
+}
+
+function handleAnswer(questionId, answer) {
+  store.dispatch(actions.addAnswer(questionId, answer));
   if (questionId == store.getState().firstQuestion) {
     Notifications.dismissAllNotificationsAsync();
     scheduleNotification();
   }
-  store.dispatch(spinnerOff());
+  store.dispatch(actions.spinnerOff());
 }
 
 function scheduleNotification() {

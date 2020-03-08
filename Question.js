@@ -2,11 +2,7 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { connect } from 'react-redux';
-import * as firebase from 'firebase';
-import '@firebase/firestore';
 import { saveAnswer } from './logic.js';
-import { store } from './reducers';
-import { spinnerOn, spinnerOff } from './actions.js';
 import * as strings from './strings';
 
 
@@ -210,27 +206,14 @@ class Question extends React.Component {
   }
 
   submitAnswer(answer) {
-    store.dispatch(spinnerOn());
     let answerObject = {
       answer: answer,
-      // email: email,
       name: this.props.name,
       timestamp: new Date()
     };
-    const db = firebase.firestore();
-    let questionId = this.props.id;
-    db.collection("events").doc(this.props.event.id).collection("questions")
-      .doc(this.props.id).collection('answers')
-      .add(answerObject)
-      .then(function(docRef) {
-          console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
-          saveAnswer(questionId, answerObject);
-      })
-      .catch(function(error) {
-          console.error("Error adding document: ", error);
-          store.dispatch(spinnerOff());
-      });
-  };
+        let questionId = this.props.id;
+    saveAnswer(questionId, answerObject);
+  }
 
   render() {
     console.log("Q: " + this.props.id);
