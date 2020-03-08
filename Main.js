@@ -59,6 +59,7 @@ class Main extends React.Component {
             <Menu
               ref={this.setMenuRef}
               button={<Text onPress={this.showMenu} style={styles.menuDotsStyle}>&#x2807;</Text>}
+              style={{ marginTop: 40 }}
             >
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 {strings.EXIT_TEXT}

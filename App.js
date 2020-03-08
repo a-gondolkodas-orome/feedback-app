@@ -8,7 +8,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './reducers'
 import { Notifications } from 'expo';
-import { registerForPushNotificationsAsync } from './notif';
+import { registerForNotificationsAsync } from './notif';
 import { showFirst } from './actions';
 
 // The following code is just to disable some annoying warnings in expo.
@@ -47,7 +47,7 @@ export default class App extends React.Component {
   componentDidMount() {
     AppState.addEventListener('change', this._handleAppStateChange);
 
-    registerForPushNotificationsAsync();
+    registerForNotificationsAsync();
     // Handle notifications that are received or selected while the app
     // is open. If the app was closed and then opened by tapping the
     // notification (rather than just tapping the app icon to open it),

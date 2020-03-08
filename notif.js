@@ -1,7 +1,7 @@
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
 
-export async function registerForPushNotificationsAsync () {
+export async function registerForNotificationsAsync () {
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -31,13 +31,12 @@ export async function registerForPushNotificationsAsync () {
 
   console.log('Notification permission: granted');
 
+  // We don't want push notifications for now. This code below would be necessary then.
   // Get the token that uniquely identifies this device
-  let token = await Notifications.getExpoPushTokenAsync();
-
-  console.log('User token:' + token);
-
+  // let token = await Notifications.getExpoPushTokenAsync();
+  // console.log('User token:' + token);
   // POST the token to your backend server from where you can retrieve it to send push notifications.
-/*  return fetch(PUSH_ENDPOINT, {
+  /*return fetch(PUSH_ENDPOINT, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -51,11 +50,7 @@ export async function registerForPushNotificationsAsync () {
         username: 'Brent',
       },
     }),
-  });
-*/
-  
-  
-
+  });*/
 }
 
 
