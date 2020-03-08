@@ -8,6 +8,7 @@ export const CLEAR_QUESTIONS = 'CLEAR_QUESTIONS'
 export const ADD_QUESTION = 'ADD_QUESTION'
 export const ADD_ANSWER = 'ADD_ANSWER'
 export const SHOW_FIRST = 'SHOW_FIRST'
+export const CHANGE_TEXT = 'CHANGE_TEXT'
 export const SPINNER_ON = 'SPINNER_ON'
 export const SPINNER_OFF = 'SPINNER_OFF'
 export const LEAVE_EVENT = 'LEAVE_EVENT'
@@ -36,6 +37,11 @@ export function addQuestion(id, data, index, next) {
 export function addAnswer(questionId, answer) {
   return { type: ADD_ANSWER, questionId, answer }
 }
+
+export function changeText(text) {
+  return { type: CHANGE_TEXT, text }
+}
+
 
 export function showFirst() {
   return { type: SHOW_FIRST }

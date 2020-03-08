@@ -8,7 +8,7 @@ import * as strings from './strings';
 
 const initialState = {
   eventCode: "",
-  event: null, // will be like this: { data: { name: "", }, },
+  event: null, // will be like this: { data: { name: "Asd", code: XYZW, frequency: <minutes>, from: <Date>, until: <Date> }, },
   questions: {}, // map from question id to question data like this: 
                  // { id: "...",
                  //   data: <data in firestore>,
@@ -37,6 +37,10 @@ export default function feedbackReducer(state = initialState, action) {
     case actions.CLEAR_QUESTIONS:
       return Object.assign({}, state, {
         questions: {}
+      });
+    case actions.CHANGE_TEXT:
+      return Object.assign({}, state, {
+        noQuestionText: action.text
       });
     case actions.ADD_QUESTION:
       let entry = {};

@@ -31,15 +31,15 @@
 * event
   - name
   - code
+  - from
+  - until
+  - frequency (minutes)
 
 Minden event-hez tartozik egy questions collection
 
 * question
   - type (scale5 / scale3 / scale10 / wordcloud / textbox)
   - text
-  - from
-  - until
-  - frequency (minutes)
   - Ha type=wordcloud: words
 
 Minden question-höz tartozik egy answers collection:

@@ -2,7 +2,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { Notifications } from 'expo';
 import { store } from './reducers';
-import { addQuestion, addAnswer, spinnerOff, clearQuestions, showFirst } from './actions'
+import { addQuestion, addAnswer, spinnerOff, clearQuestions, showFirst, changeText } from './actions'
 import * as strings from './strings';
 
 export function loadQuestions() {
@@ -25,11 +25,18 @@ export function loadQuestions() {
         const next = (i + 1 < questions.length ? questions[i + 1].id : "");
         store.dispatch(addQuestion(questions[i].id, questions[i].data, i, next));
       }
-      store.dispatch(showFirst());
+      let now = (new Date()).getTime();
+      if (now < store.getState().event.data.from.seconds * 1000) {
+        console.log("Event hasn't started, we will schedule a notification to the start.");
+        store.dispatch(changeText(strings.EVENT_LATER_TEXT));
+        scheduleNotification();
+      } else {
+        store.dispatch(showFirst());
+      }
     })
     .catch(function(error) {
       console.log("Error getting questions: ", error);
-      // TODO: display error
+      store.dispatch(changeText(strings.ERROR_TEXT));
     });
     store.dispatch(spinnerOff());
 }
@@ -38,21 +45,24 @@ export function saveAnswer(questionId, answer) {
   store.dispatch(addAnswer(questionId, answer));
   if (questionId == store.getState().firstQuestion) {
     Notifications.dismissAllNotificationsAsync();
-    scheduleNotification(questionId);
+    scheduleNotification();
   }
   store.dispatch(spinnerOff());
 }
 
-function scheduleNotification(id) {
+function scheduleNotification() {
   // Cancel all active ones.
   Notifications.cancelAllScheduledNotificationsAsync();
   let now = (new Date()).getTime();
-  const question = store.getState().questions[id];
-  const freq = 60 * 1000 * question.data.frequency;
+  const event = store.getState().event;
+  const freq = 60 * 1000 * event.data.frequency;
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
-  if (scheduleFor > question.data.until.seconds * 1000) {
+  if (scheduleFor > event.data.until.seconds * 1000) {
     // Past the end of event.
     return;
+  }
+  if (scheduleFor < event.data.from.seconds * 1000) {
+    scheduleFor = event.data.from.seconds * 1000 + Math.floor(120 * 1000 * Math.random()); // Random time within 2 minutes after start.
   }
 
   Notifications.scheduleLocalNotificationAsync({
