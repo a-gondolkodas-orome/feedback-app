@@ -25,7 +25,7 @@ console.warn = message => {
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: GoogleServices.client[0].api_key,
+  apiKey: GoogleServices.client[0].api_key[0].current_key,
   projectId: GoogleServices.project_info.project_id,
   authDomain: "feedback-app-ago.firebaseapp.com",
   databaseURL: GoogleServices.project_info.firebase_url,
@@ -33,6 +33,23 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
+firebase.auth().signInAnonymously().catch(function(error) {
+  // Handle Errors here.
+  console.log("Sign in:", error.code, error.message);
+});
+
+firebase.auth().onAuthStateChanged(function(user) {
+  if (user) {
+    console.log("Sign in:", user);
+    // User is signed in.
+    var isAnonymous = user.isAnonymous;
+    var uid = user.uid;
+  } else {
+    // User is signed out.
+    console.log("Sign out:", user);
+  }
+});
 
 // TODO: the code below enables offline data storage, it doesn't work with Expo
 /*
