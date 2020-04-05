@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { AppState } from 'react-native';
 import * as firebase from 'firebase';
@@ -10,6 +9,7 @@ import { persistor, store } from './reducers'
 import { Notifications } from 'expo';
 import { registerForNotificationsAsync } from './notif';
 import { showFirst } from './actions';
+import GoogleServices from './google-services.json';
 
 // The following code is just to disable some annoying warnings in expo.
 import { YellowBox } from 'react-native';
@@ -25,14 +25,15 @@ console.warn = message => {
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyDmshJPEN5RyoQB5HI9f6vf4Ys7dn8Gkkw",
-  projectId: "feedback-app-ago",
+  apiKey: GoogleServices.client[0].api_key,
+  projectId: GoogleServices.project_info.project_id,
   authDomain: "feedback-app-ago.firebaseapp.com",
-  databaseURL: "https://feedback-app-ago.firebaseio.com",
-  storageBucket: "feedback-app-ago.appspot.com"
+  databaseURL: GoogleServices.project_info.firebase_url,
+  storageBucket: GoogleServices.project_info.storage_bucket
 };
 
 firebase.initializeApp(firebaseConfig);
+
 // TODO: the code below enables offline data storage, it doesn't work with Expo
 /*
 firebase.firestore().enablePersistence()

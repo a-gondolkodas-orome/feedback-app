@@ -1,3 +1,6 @@
+# Google Firebase API key
+google-services.json
+
 # Xcode
 !**/*.xcodeproj
 !**/*.pbxproj
