@@ -33,6 +33,13 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+// TODO: the code below enables offline data storage, it doesn't work with Expo
+/*
+firebase.firestore().enablePersistence()
+  .catch(function(err) {
+    console.log("Error enabling firestore offline persistence: ", err);
+});
+*/
 
 export default class App extends React.Component {
 
@@ -87,7 +94,7 @@ export default class App extends React.Component {
     let now = new Date();
     let elapsedSeconds = (now - firstQuestionData.lastAnswerTime) / 1000;
     console.log("Elapsed: ", elapsedSeconds, "forced: ", forced);
-    let frequencySeconds = firstQuestionData.data.frequency * 60;
+    let frequencySeconds = store.getState().event.data.frequency * 60;
     if (forced || store.getState().questionToShow != firstQuestionData.id && elapsedSeconds > 0.75 * frequencySeconds) {
       store.dispatch(showFirst());
     }
