@@ -73,7 +73,7 @@ function scheduleNotification() {
   const event = store.getState().event.data;
   const freq = 60 * 1000 * event.frequency;
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
-  if (scheduleFor > event.data.until.seconds * 1000) {
+  if (scheduleFor > event.until.seconds * 1000) {
     // Past the end of event.
     return;
   }
@@ -91,7 +91,8 @@ function scheduleNotification() {
     },
     {
       time: scheduleFor,
-      repeat: 'minute'
+      // intervalMs: 5 * 60000, -> throws exception :S
+      repeat: "minute"
     }
   );
   console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
