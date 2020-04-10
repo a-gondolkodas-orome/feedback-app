@@ -6,7 +6,7 @@ import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { loadQuestions } from './logic';
 import { store } from './reducers';
-import { setEvent, setName, spinnerOff } from './actions';
+import { setEvent, spinnerOff } from './actions';
 
 class Welcome extends React.Component {
 
@@ -22,16 +22,6 @@ class Welcome extends React.Component {
       <View style={styles.container}>
         <Text style={{height: 30, fontSize: 24, color: '#d3d3d3'}}>Feedback App</Text>
         <Text style={styles.label}>Kapcsolódás eseményhez</Text>
-        <Text style={styles.label}>A neved/jeligéd:</Text>
-        <TextInput
-          ref={(input) => { this.nameTextInput = input; }}
-          style={styles.textInput}
-          //onChangeText={(text) => store.dispatch(setName(text))}
-          value={this.props.name}
-          autoCapitalize="words"
-          autoCorrect={false}
-          onSubmitEditing={() => { this.codeTextInput.focus(); }}
-        />
         <Text style={styles.label}>Esemény kódja:</Text>
         <TextInput
           ref={(input) => { this.codeTextInput = input; }}
@@ -52,11 +42,6 @@ class Welcome extends React.Component {
   }
 
   connectToEvent() {
-    if (this.props.name == "") {
-      this.nameTextInput.focus();
-      // TODO: red border
-      return;
-    }
     if (this.state.code == "") {
       this.codeTextInput.focus();
       // TODO: red border
@@ -101,7 +86,6 @@ class Welcome extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  name: state.name,
   event: state.event
 });
 
