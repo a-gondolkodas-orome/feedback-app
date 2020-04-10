@@ -86,7 +86,7 @@ function scheduleNotification() {
   Notifications.scheduleLocalNotificationAsync({
       title: strings.NOTIFICATION_TITLE,
       body: strings.NOTIFICATION_TEXT,
-      ios: { sound: true },
+      ios: { sound: false },
       android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
     },
     {
