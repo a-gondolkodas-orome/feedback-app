@@ -26,7 +26,7 @@ class Welcome extends React.Component {
         <TextInput
           ref={(input) => { this.nameTextInput = input; }}
           style={styles.textInput}
-          onChangeText={(text) => store.dispatch(setName(text))}
+          //onChangeText={(text) => store.dispatch(setName(text))}
           value={this.props.name}
           autoCapitalize="words"
           autoCorrect={false}

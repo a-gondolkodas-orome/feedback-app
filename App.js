@@ -8,7 +8,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './reducers'
 import { Notifications } from 'expo';
 import { registerForNotificationsAsync } from './notif';
-import { showFirst } from './actions';
+import { showFirst, setName } from './actions';
 import GoogleServices from './google-services.json';
 
 // The following code is just to disable some annoying warnings in expo.
@@ -45,6 +45,7 @@ firebase.auth().onAuthStateChanged(function(user) {
     // User is signed in.
     var isAnonymous = user.isAnonymous;
     var uid = user.uid;
+    store.dispatch(setName(user.uid));
   } else {
     // User is signed out.
     console.log("Sign out:", user);
