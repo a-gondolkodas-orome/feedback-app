@@ -23,29 +23,31 @@
 
 ## Adatbázis, esemény, kérdések hozzáadása
 
-* Fejlesztés alatt van egy [admin weboldal](https://github.com/a-gondolkodas-orome/feedback-app-export)
-* Jelenleg a Cloud Firestore console-on lehet szerkeszteni az adatokat (események, kérdések), és vizsgálni a válaszokat: https://console.firebase.google.com/project/feedback-app-ago/database
+* [Admin weboldal](https://github.com/a-gondolkodas-orome/feedback-app-export)
+* A fejlesztők a Cloud Firestore console-on is tudják szerkeszteni az adatokat (események, kérdések), és vizsgálni a válaszokat: https://console.firebase.google.com/project/feedback-app-ago/database
 
 ### DB Séma
 
 * event
-  - name
-  - code
-  - from
-  - until
-  - frequency (minutes)
+  - name: név
+  - code: 3-5 számjegy, amivel kapcsolódni lehet
+  - from: esemény kezdetének időpontja
+  - until: esemény végének időpontja
+  - frequency: percekben mért periódusa a kérdőívnek
+  - morning (optional): szám, 0..23 lehet, ennyi óra előtt nem adunk értesítést
+  - evening (optional): szám, 0..23 lehet, ennyi óra után nem adunk értesítést
 
 Minden event-hez tartozik egy questions collection
 
 * question
   - type (scale5 / scale3 / scale10 / wordcloud / textbox)
-  - text
-  - Ha type=wordcloud: words
+  - text: a kérdés szövege
+  - words: csak ha type=wordcloud akkor kell, választható szavak listája
 
 Minden question-höz tartozik egy answers collection:
 
 * answer
-  - name
-  - answer
-  - timestamp
+  - name: valójában user id
+  - answer: mit válaszolt
+  - timestamp: mikor történt a válasz, a telefon szerinti időt tároljuk
 
