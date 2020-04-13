@@ -19,6 +19,10 @@ const initialState = {
   questionToShow: "",
   name: "",
   noQuestionText: strings.INITIAL_TEXT,
+  jokes: {
+    last: {id: -1, first: "firstpart", second: "secondpart"},
+    new:  {id:  0, first: "newfirst",  second: "newsecond"},
+  },
   spinner: false,
 }
 

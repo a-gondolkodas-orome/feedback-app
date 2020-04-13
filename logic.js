@@ -55,6 +55,7 @@ export function saveAnswer(questionId, answerObject) {
         console.error("Error adding document: ", error);
         store.dispatch(actions.spinnerOff());
     });
+  // TODO: load next joke here!
 }
 
 function handleAnswer(questionId, answer) {
