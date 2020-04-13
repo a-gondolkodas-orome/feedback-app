@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import Welcome from './Welcome';
 import Question from './Question';
@@ -79,8 +79,9 @@ class Main extends React.Component {
           visible={this.props.spinner}
           cancelable={true}
         />
-
-        {innerComponent}
+        <ScrollView style={{alignSelf: 'stretch'}}>
+          {innerComponent}
+        </ScrollView>
       </View>
     );
   }

@@ -273,6 +273,7 @@ const question_styles = StyleSheet.create({
     color: '#fff',
     borderRadius: 20,
     margin: 5,
+    padding: 10
   },
   wordcloud_button: {
     borderWidth:1,

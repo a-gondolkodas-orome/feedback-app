@@ -1,5 +1,6 @@
 import * as firebase from 'firebase';
 import '@firebase/firestore';
+import { loadNextJoke } from './Joke';
 import { Notifications } from 'expo';
 import { store } from './reducers';
 import * as actions from './actions'
@@ -55,7 +56,6 @@ export function saveAnswer(questionId, answerObject) {
         console.error("Error adding document: ", error);
         store.dispatch(actions.spinnerOff());
     });
-  // TODO: load next joke here!
 }
 
 function handleAnswer(questionId, answer) {
@@ -64,7 +64,15 @@ function handleAnswer(questionId, answer) {
     Notifications.dismissAllNotificationsAsync();
     scheduleNotification();
   }
-  store.dispatch(actions.spinnerOff());
+  if ("" == store.getState().questionToShow) {
+    loadNextJoke(store.getState().jokes.new.id)
+      .then(actions.updateJoke)
+      .then(store.dispatch)
+      .catch(console.error)
+      .then(() => store.dispatch(actions.spinnerOff()));
+  } else {
+    store.dispatch(actions.spinnerOff());
+  }
 }
 
 function scheduleNotification() {

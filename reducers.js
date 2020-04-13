@@ -20,8 +20,8 @@ const initialState = {
   name: "",
   noQuestionText: strings.INITIAL_TEXT,
   jokes: {
-    last: {id: -1, first: "firstpart", second: "secondpart"},
-    new:  {id:  0, first: "newfirst",  second: "newsecond"},
+    last: {id: -2, first: "", second: ""},
+    new:  {id: -1, first: "",  second: ""},
   },
   spinner: false,
 }
@@ -68,6 +68,13 @@ export default function feedbackReducer(state = initialState, action) {
     case actions.SHOW_FIRST:
       return Object.assign({}, state, {
         questionToShow: state.firstQuestion
+      });
+    case actions.UPDATE_JOKE:
+      return Object.assign({}, state, {
+        jokes: {
+          last: state.jokes.new,
+          new: action.joke
+        }
       });
     case actions.SPINNER_ON:
       return Object.assign({}, state, {
