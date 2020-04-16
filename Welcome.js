@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { loadQuestions } from './logic';
 import { store } from './reducers';
 import { setEvent, spinnerOff } from './actions';
+import OnlineButton from './OnlineButton';
 
 class Welcome extends React.Component {
 
@@ -31,12 +32,12 @@ class Welcome extends React.Component {
           value={this.state.code}
           keyboardType="numeric"
         />
-        <TouchableOpacity
+        <OnlineButton
           onPress={this.connectToEvent.bind(this)}
           style={styles.connectButton}
         >
           <Text style={{color: "white", fontSize: 24}}>Kapcsolódás</Text>
-        </TouchableOpacity>
+        </OnlineButton>
       </View>
     );
   }
