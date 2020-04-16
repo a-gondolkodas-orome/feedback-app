@@ -3,24 +3,37 @@ import { StyleSheet, Text, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
-import * as strings from './strings';
+import { store } from './reducers';
+import * as actions from './actions';
 
-/* jokes: entry of the last and new joke (with first half displayed)
+/* jokes: entry of the last, the new joke (with first half displayed)
+ * and the colleciton of remaining jokes
+ * ADD_JOKES: adds an array of jokes into `jokes.collection'
  * UPDATE_JOKE: loads the next joke to display into `jokes'
  */
 
-export function loadNextJoke(currId) {
+export function loadAllJokes() {
   const db = firebase.firestore();
-  console.log("loading next joke, curr: " + currId);
-  return db.collection("jokes").where("id", ">", currId).orderBy("id").limit(1)
-    .get()
+  console.log("loading all jokes");
+  db.collection("jokes").get()
     .then(querySnapshot => {
-      if (querySnapshot.empty)
-        return db.collection("jokes").orderBy("id").limit(1).get()
-      else
-        return querySnapshot
+      let jokes = new Array();
+      querySnapshot.forEach(joke => {
+        jokes.push({id: joke.id, data: joke.data()})
+      });
+      return jokes;
     })
-    .then(querySnapshot => querySnapshot.docs[0].data())
+    .then(actions.addJokes)
+    .then(store.dispatch)
+    .catch(console.error);
+}
+
+export function activateNextJoke() {
+  console.log("activating next joke");
+  store.dispatch(actions.updateJoke());
+  if (Object.keys(store.getState().jokes.collection).length == 0) {
+    loadAllJokes();
+  }
 }
 
 function Joke(props) {

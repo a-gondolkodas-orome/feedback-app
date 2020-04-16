@@ -9,6 +9,7 @@ export const ADD_QUESTION = 'ADD_QUESTION'
 export const ADD_ANSWER = 'ADD_ANSWER'
 export const SHOW_FIRST = 'SHOW_FIRST'
 export const CHANGE_TEXT = 'CHANGE_TEXT'
+export const ADD_JOKES = 'ADD_JOKES'
 export const UPDATE_JOKE = 'UPDATE_JOKE'
 export const SPINNER_ON = 'SPINNER_ON'
 export const SPINNER_OFF = 'SPINNER_OFF'
@@ -43,13 +44,16 @@ export function changeText(text) {
   return { type: CHANGE_TEXT, text }
 }
 
-
 export function showFirst() {
   return { type: SHOW_FIRST }
 }
 
-export function updateJoke(joke) {
-  return { type: UPDATE_JOKE, joke }
+export function addJokes(jokes) {
+  return { type: ADD_JOKES, jokes }
+}
+
+export function updateJoke() {
+  return { type: UPDATE_JOKE }
 }
 
 export function spinnerOn() {
