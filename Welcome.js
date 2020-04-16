@@ -95,7 +95,6 @@ export default connect(mapStateToProps)(Welcome);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 50,
-    borderColor: '#0b1633',
+    borderColor: 'transparent',
     borderBottomColor: '#fff',
     color: '#fff',
     borderWidth: 1,
