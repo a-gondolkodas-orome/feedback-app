@@ -15,7 +15,7 @@ export default class OnlineButton extends React.Component {
         if (isConnected) {
           this.props.onPress();
         } else {
-          Alert.alert(strings.OFFLINE_TEXT);
+          Alert.alert("Offline", strings.OFFLINE_TEXT);
         }
       });
     } else {
@@ -34,7 +34,7 @@ export default class OnlineButton extends React.Component {
     );
 
     if (isConnected === false) {
-      Alert.alert(strings.OFFLINE_TEXT);
+      Alert.alert("Offline", strings.OFFLINE_TEXT);
     } else {
       this.props.onPress();
     }
