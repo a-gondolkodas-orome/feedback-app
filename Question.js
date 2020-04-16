@@ -213,7 +213,6 @@ export default connect(mapStateToProps)(Question);
 const question_styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',

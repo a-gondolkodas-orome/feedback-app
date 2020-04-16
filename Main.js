@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import Welcome from './Welcome'
 import Question from './Question'
@@ -33,14 +34,19 @@ class Main extends React.Component {
   };
 
   render() {
+    const gradient = (<LinearGradient
+      colors={['transparent', 'rgba(39,76,177,0.6)']}
+      style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 400, }}
+    />);
     // TODO: use navigation instead of this if.
     if (this.props.event == null) {
       return (
         <View style={styles.container}>
-        <Spinner
-          visible={this.props.spinner}
-          cancelable={true}
-        />
+          <Spinner
+            visible={this.props.spinner}
+            cancelable={true}
+          />
+          {gradient}
           <Welcome
             store={store}
           />
@@ -71,7 +77,7 @@ class Main extends React.Component {
           visible={this.props.spinner}
           cancelable={true}
         />
-
+        {gradient}
         {innerComponent}
       </View>
     );
