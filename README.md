@@ -29,23 +29,26 @@
 ### DB Séma
 
 * event
-  - name
-  - code
-  - from
-  - until
-  - frequency (minutes)
+  - name (string): az esemény címe
+  - code (string): ezzel lehet kapcsolódni
+  - from (dátum): az esemény kezdete
+  - until (dátum): az esemény vége
+  - frequency (szám, perc): kérdések gyakorisága percekben
+  - duration (szám, óra): maximum hány óráig tegyünk fel kérdéseket, az első választól számítva
+  - morning (szám, óra): reggel hány óra előtt ne legyen kérdés (pl. 9)
+  - evening (szám, óra): este hány óra után ne legyen kérdés (pl. 22)
 
 Minden event-hez tartozik egy questions collection
 
 * question
-  - type (scale5 / scale3 / scale10 / wordcloud / textbox)
-  - text
-  - Ha type=wordcloud: words
+  - type (scale5 / scale3 / scale10 / wordcloud / textbox): a válaszadás típusa
+  - text (string): a kérdés szövege
+  - words (array, csak ha type=wordcloud): a lehetséges válaszok felsorolva
 
 Minden question-höz tartozik egy answers collection:
 
 * answer
-  - name
-  - answer
-  - timestamp
+  - name (string): ez igazából user id.
+  - answer (string): a válasz szövege, értéke
+  - timestamp (dátum): a válasz időpontja
 
