@@ -89,8 +89,6 @@ const mapStateToProps = state => ({
   event: state.event
 });
 
-// TODO: introduce mapDispatchToProps with setting name.
-
 export default connect(mapStateToProps)(Welcome);
 
 const styles = StyleSheet.create({
