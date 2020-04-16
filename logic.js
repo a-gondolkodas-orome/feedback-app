@@ -81,8 +81,8 @@ function scheduleNotification() {
   // Check that we don't schedule after the max duration of the event.
   const firstQuestion = store.getState().questions[store.getState().firstQuestion];
   if (firstQuestion && firstQuestion.answerCount > 0 && event.duration &&
-      scheduleFor > firstQuestion.firstAnswerTime + event.duration * 3600 * 1000) {
-        store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
+      scheduleFor > firstQuestion.firstAnswerTime.getTime() + event.duration * 3600 * 1000) {
+    store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
     return;
   }
   if (scheduleFor < event.from.seconds * 1000) {
