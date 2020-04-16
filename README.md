@@ -23,32 +23,34 @@
 
 ## Adatbázis, esemény, kérdések hozzáadása
 
-* Fejlesztés alatt van egy [admin weboldal](https://github.com/a-gondolkodas-orome/feedback-app-export)
-* Jelenleg a Cloud Firestore console-on lehet szerkeszteni az adatokat (események, kérdések), és vizsgálni a válaszokat: https://console.firebase.google.com/project/feedback-app-ago/database
+* [Admin weboldal](https://github.com/a-gondolkodas-orome/feedback-app-export)
+* A fejlesztők a Cloud Firestore console-on is tudják szerkeszteni az adatokat (események, kérdések), és vizsgálni a válaszokat: https://console.firebase.google.com/project/feedback-app-ago/database
 
 ### DB Séma
 
 * event
   - name (string): az esemény címe
-  - code (string): ezzel lehet kapcsolódni
-  - from (dátum): az esemény kezdete
-  - until (dátum): az esemény vége
+  - code (string): 3-5 számjegy, amivel kapcsolódni lehet
+  - from (dátum): az esemény kezdetének időpontja
+  - until (dátum): az esemény végének időpontja
   - frequency (szám, perc): kérdések gyakorisága percekben
-  - duration (szám, óra): maximum hány óráig tegyünk fel kérdéseket, az első választól számítva
-  - morning (szám, óra): reggel hány óra előtt ne legyen kérdés (pl. 9)
-  - evening (szám, óra): este hány óra után ne legyen kérdés (pl. 22)
+  - duration (szám, óra, opcionális): maximum hány órán át tegyünk fel kérdéseket, az első választól számítva
+  - morning (szám, óra, opcionális): szám, 0..23 lehet, reggel ennyi óra előtt nem adunk értesítést
+  - evening (szám, óra, opcionális): szám, 0..23 lehet, este ennyi óra után nem adunk értesítést
 
 Minden event-hez tartozik egy questions collection
 
 * question
   - type (scale5 / scale3 / scale10 / wordcloud / textbox): a válaszadás típusa
   - text (string): a kérdés szövege
-  - words (array, csak ha type=wordcloud): a lehetséges válaszok felsorolva
+  - words (array, csak ha type=wordcloud): a választható szavak listája
+
 
 Minden question-höz tartozik egy answers collection:
 
 * answer
-  - name (string): ez igazából user id.
+  - name (string): ez igazából user id
   - answer (string): a válasz szövege, értéke
-  - timestamp (dátum): a válasz időpontja
+  - timestamp (dátum): a válasz időpontja, a telefon szerinti időt tároljuk
+
 
