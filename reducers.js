@@ -14,6 +14,7 @@ const initialState = {
                  //   data: <data in firestore>,
                  //   next: <next question id>
                  //   answerCount: 0,
+                 //   firstAnswerTime: null,
                  //   lastAnswerTime: null, };
   firstQuestion: "",
   questionToShow: "",
@@ -30,21 +31,31 @@ export default function feedbackReducer(state = initialState, action) {
         event: action.event,
         eventCode: action.event.code, // redundant, but we want to retain it.
       });
+    
     case actions.SET_NAME:
       return Object.assign({}, state, {
         name: action.name
       });
+
     case actions.CLEAR_QUESTIONS:
       return Object.assign({}, state, {
         questions: {}
       });
+
     case actions.CHANGE_TEXT:
       return Object.assign({}, state, {
         noQuestionText: action.text
       });
+
     case actions.ADD_QUESTION:
       let entry = {};
-      entry[action.id] = { id: action.id, data: action.data, next: action.next, answerCount: 0, lastAnswerTime: null, };
+      entry[action.id] = {
+        id: action.id,
+        data: action.data,
+        next: action.next,
+        answerCount: 0,
+        firstAnswerTime: null,
+        lastAnswerTime: null, };
       console.log(entry);
       if (action.index == 0)
         return Object.assign({}, state, {
@@ -54,33 +65,43 @@ export default function feedbackReducer(state = initialState, action) {
       else return Object.assign({}, state, {
         questions: Object.assign({}, state.questions, entry)
       });
+
     case actions.ADD_ANSWER:
       let newState = Object.assign({}, state);
       newState.questions[action.questionId].answerCount++;
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
+      if (newState.questions[action.questionId].answerCount == 1) {
+        newState.questions[action.questionId].firstAnswerTime = action.answer.timestamp;
+      }
       newState.questionToShow = state.questions[state.questionToShow].next;
       newState.noQuestionText = strings.THANK_YOU_TEXT;
       return newState;
+
     case actions.SHOW_FIRST:
       return Object.assign({}, state, {
         questionToShow: state.firstQuestion
       });
+
     case actions.SPINNER_ON:
       return Object.assign({}, state, {
         spinner: true
       });
+
     case actions.SPINNER_OFF:
       return Object.assign({}, state, {
         spinner: false
       });
+
     case actions.LEAVE_EVENT:
       Notifications.cancelAllScheduledNotificationsAsync();
       newState = Object.assign({}, initialState);
       newState.name = state.name;
       newState.eventCode = state.eventCode;
       return newState;
+
     case actions.RESET:
       return initialState;
+      
     default:
       return state;
   }
