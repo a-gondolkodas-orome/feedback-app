@@ -25,7 +25,7 @@ export async function registerForNotificationsAsync () {
     "FeedbackAppNewQuestion",
     {
       name: "Feedback App New Question",
-      sound: true,
+      sound: false,
       vibrate: true,
     });
 

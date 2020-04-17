@@ -74,27 +74,58 @@ function scheduleNotification() {
   // Cancel all active ones.
   Notifications.cancelAllScheduledNotificationsAsync();
   let now = (new Date()).getTime();
-  const event = store.getState().event;
-  const freq = 60 * 1000 * event.data.frequency;
+  const event = store.getState().event.data;
+  const freq = 60 * 1000 * event.frequency;
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
-  if (scheduleFor > event.data.until.seconds * 1000) {
-    // Past the end of event.
+  // Check that we don't schedule after the end of event.
+  if (event.until && scheduleFor > event.until.seconds * 1000) {
+    store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
     return;
   }
-  if (scheduleFor < event.data.from.seconds * 1000) {
-    scheduleFor = event.data.from.seconds * 1000 + Math.floor(120 * 1000 * Math.random()); // Random time within 2 minutes after start.
+  // Check that we don't schedule after the max duration of the event.
+  const firstQuestion = store.getState().questions[store.getState().firstQuestion];
+  if (firstQuestion && firstQuestion.answerCount > 0 && event.duration &&
+      scheduleFor > firstQuestion.firstAnswerTime.getTime() + event.duration * 3600 * 1000) {
+    store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
+    return;
   }
+  if (scheduleFor < event.from.seconds * 1000) {
+    scheduleFor = event.from.seconds * 1000 + Math.floor(120 * 1000 * Math.random()); // Random time within 2 minutes after start.
+  }
+  scheduleFor = adjustScheduleTime(scheduleFor, event);
+  logTime(now, scheduleFor);
 
   Notifications.scheduleLocalNotificationAsync({
       title: strings.NOTIFICATION_TITLE,
       body: strings.NOTIFICATION_TEXT,
-      ios: { sound: true },
+      ios: { sound: false },
       android: { channelId: "FeedbackAppNewQuestion", icon: "./assets/kisfej.png" }
     },
     {
       time: scheduleFor,
-      repeat: 'minute'
+      // intervalMs: 5 * 60000, -> throws exception :S
+      repeat: "minute"
     }
   );
   console.log("Notification set for: " + (new Date(scheduleFor).toLocaleTimeString()));
+}
+
+function adjustScheduleTime(scheduleTime, event) {
+  let dateSchedule = new Date(scheduleTime);
+  if (event.morning && dateSchedule.getHours() < event.morning ||
+      event.evening && dateSchedule.getHours() >= event.evening) {
+    dateSchedule.setHours(event.morning, 0);
+    if (dateSchedule.getTime() < scheduleTime) {
+      dateSchedule.setDate(dateSchedule.getDate() + 1);
+    }
+    return dateSchedule.getTime();
+  }
+  return scheduleTime;
+}
+
+function logTime(now, scheduleFor) {
+  let dateNow = new Date(now);
+  let dateSchedule = new Date(scheduleFor);
+  console.log("Now: ", dateNow.getHours(), dateNow.getMinutes(), dateNow.getSeconds());
+  console.log("Schedule: ", dateSchedule.getHours(), dateSchedule.getMinutes(), dateSchedule.getSeconds());
 }

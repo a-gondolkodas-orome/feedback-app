@@ -29,25 +29,28 @@
 ### DB Séma
 
 * event
-  - name: név
-  - code: 3-5 számjegy, amivel kapcsolódni lehet
-  - from: esemény kezdetének időpontja
-  - until: esemény végének időpontja
-  - frequency: percekben mért periódusa a kérdőívnek
-  - morning (optional): szám, 0..23 lehet, ennyi óra előtt nem adunk értesítést
-  - evening (optional): szám, 0..23 lehet, ennyi óra után nem adunk értesítést
+  - name (string): az esemény címe
+  - code (string): 3-5 számjegy, amivel kapcsolódni lehet
+  - from (dátum): az esemény kezdetének időpontja
+  - until (dátum): az esemény végének időpontja
+  - frequency (szám, perc): kérdések gyakorisága percekben
+  - duration (szám, óra, opcionális): maximum hány órán át tegyünk fel kérdéseket, az első választól számítva
+  - morning (szám, óra, opcionális): szám, 0..23 lehet, reggel ennyi óra előtt nem adunk értesítést
+  - evening (szám, óra, opcionális): szám, 0..23 lehet, este ennyi óra után nem adunk értesítést
 
 Minden event-hez tartozik egy questions collection
 
 * question
-  - type (scale5 / scale3 / scale10 / wordcloud / textbox)
-  - text: a kérdés szövege
-  - words: csak ha type=wordcloud akkor kell, választható szavak listája
+  - type (scale5 / scale3 / scale10 / wordcloud / textbox): a válaszadás típusa
+  - text (string): a kérdés szövege
+  - words (array, csak ha type=wordcloud): a választható szavak listája
+
 
 Minden question-höz tartozik egy answers collection:
 
 * answer
-  - name: valójában user id
-  - answer: mit válaszolt
-  - timestamp: mikor történt a válasz, a telefon szerinti időt tároljuk
+  - name (string): ez igazából user id
+  - answer (string): a válasz szövege, értéke
+  - timestamp (dátum): a válasz időpontja, a telefon szerinti időt tároljuk
+
 

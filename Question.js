@@ -1,21 +1,20 @@
 
 import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 import { saveAnswer } from './logic.js';
 import * as strings from './strings';
+import OnlineButton from './OnlineButton.js';
 
 
 class WordCloud extends React.Component {
 
-// props: question: reference to parent Question component
-
+  // props: question: reference to parent Question component
   constructor(props) {
     super(props);
   }
 
   render() {
-
     var wordComponents=[];
     let i=1;
     for (wordId in this.props.question.questionObjectData.words) {
@@ -28,19 +27,13 @@ class WordCloud extends React.Component {
     }
 
     return (
-      <View style = {{
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}>
+      <View style={question_styles.outer_container}>
         <View style={question_styles.wordcloud_container} >
           {wordComponents}
         </View>
       </View>
     )
-
   }
-
 }
 
 
@@ -48,66 +41,49 @@ class WordButtonForWordCloudAnswer extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity
-        title={this.props.title}
+      <OnlineButton
         style={question_styles.wordcloud_button}
         onPress={() => this.props.question.submitAnswer(this.props.title)}
       >
-        <Text style={{
-          color: '#fff',
-          textAlign: 'center'
-        }}>
-        {this.props.title}</Text>
-      </TouchableOpacity>
+        <Text style={question_styles.button_text}>{this.props.title}</Text>
+      </OnlineButton>
     )
   }
-
-
 }
 
 
 class Scale5 extends React.Component {
 
-// props: question: reference to parent Question component
-
+  // props: question: reference to parent Question component
   constructor(props) {
     super(props);
   }
 
   render() {
-
     var buttons=[];
     for (let i=1; i<=5; i++) {
       buttons.push(
         <CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />
       );
     }
-
     return (
-      <View style = {{
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}>
-        <View style = {question_styles.scale5_container} >
+      <View style={question_styles.outer_container}>
+        <View style={question_styles.scale5_container} >
           {buttons}
         </View>
       </View>
     )
   }
-
 }
 
 class Scale10 extends React.Component {
 
-// props: question: reference to parent Question component
-
+  // props: question: reference to parent Question component
   constructor(props) {
     super(props);
   }
 
   render() {
-
     var buttons1=[], buttons2=[];
     for (let i=1; i<=5; i++) {
       buttons1.push(<CircularButtonForScaleAnswer key={i} title={i.toString()} question={this.props.question} />);
@@ -117,52 +93,42 @@ class Scale10 extends React.Component {
     }
 
     return (
-      <View style = {{
-        flex: 1,
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}>
-        <View style = {question_styles.scale10_container} >
+      <View style={question_styles.outer_container}>
+        <View style={question_styles.scale10_container} >
           {buttons1}
         </View>
-        <View style = {question_styles.scale10_container} >
+        <View style={question_styles.scale10_container} >
           {buttons2}
         </View>
       </View>
     )
   }
-
 }
 
 
 class CircularButtonForScaleAnswer extends React.Component {
 
-// props: question: reference to parent Question component
-
+  // props: question: reference to parent Question component
   constructor(props) {
     super(props);
   }
 
   render() {
     return (
-      <TouchableOpacity
-        title={this.props.title}
+      <OnlineButton
         style={question_styles.circular_button}
         onPress={() => this.props.question.submitAnswer(this.props.title)}
       >
-        <Text style={{color:'#fff'}}>{this.props.title}</Text>
-      </TouchableOpacity>
+        <Text style={question_styles.button_text}>{this.props.title}</Text>
+      </OnlineButton>
     )
   }
-
 }
-
 
 
 class TextBox extends React.Component {
 
-// props: question: reference to parent Question component
-  
+  // props: question: reference to parent Question component
   constructor(props) {
     super(props);
     this.state = { answer: "" };
@@ -185,17 +151,16 @@ class TextBox extends React.Component {
             onChangeText={(text) => this.setState({answer: text})}
             value={this.state.answer}
           />
-        <TouchableOpacity
+        <OnlineButton
           style={question_styles.textbox_button}
           onPress={() => this.props.question.submitAnswer(this.state.answer)}
         >
-          <Text style={{color:'#fff'}}>Küld</Text>
-        </TouchableOpacity>
+          <Text style={question_styles.button_text}>Küld</Text>
+        </OnlineButton>
         </View>
       </View>
     );
   }
-
 }
 
 
@@ -211,8 +176,7 @@ class Question extends React.Component {
       name: this.props.name,
       timestamp: new Date()
     };
-        let questionId = this.props.id;
-    saveAnswer(questionId, answerObject);
+    saveAnswer(this.props.id, answerObject);
   }
 
   render() {
@@ -249,7 +213,6 @@ export default connect(mapStateToProps)(Question);
 const question_styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -260,6 +223,10 @@ const question_styles = StyleSheet.create({
     justifyContent: 'center',
     margin: 20,
     color: '#fff',
+  },
+  button_text: {
+    color: '#fff',
+    textAlign: 'center'
   },
   circular_button: {
     flex: 1,
@@ -286,6 +253,11 @@ const question_styles = StyleSheet.create({
     color: '#fff',
     borderRadius: 20,
     margin: 5,
+  },
+  outer_container: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
   },
   wordcloud_container: {
     flexDirection: 'column',

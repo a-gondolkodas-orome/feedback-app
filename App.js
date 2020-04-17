@@ -41,7 +41,7 @@ firebase.auth().signInAnonymously().catch(function(error) {
 
 firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
-    console.log("Sign in:", user);
+    console.log("Sign in:", user.uid);
     // User is signed in.
     store.dispatch(setName(user.uid));
   } else {

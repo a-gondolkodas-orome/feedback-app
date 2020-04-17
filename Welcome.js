@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
@@ -8,6 +8,7 @@ import { loadQuestions } from './logic';
 import { loadAllJokes } from './Joke';
 import { store } from './reducers';
 import { setEvent, spinnerOff } from './actions';
+import OnlineButton from './OnlineButton';
 
 class Welcome extends React.Component {
 
@@ -32,12 +33,12 @@ class Welcome extends React.Component {
           value={this.state.code}
           keyboardType="numeric"
         />
-        <TouchableOpacity
+        <OnlineButton
           onPress={this.connectToEvent.bind(this)}
           style={styles.connectButton}
         >
           <Text style={{color: "white", fontSize: 24}}>Kapcsolódás</Text>
-        </TouchableOpacity>
+        </OnlineButton>
       </View>
     );
   }
@@ -93,14 +94,11 @@ const mapStateToProps = state => ({
   event: state.event
 });
 
-// TODO: introduce mapDispatchToProps with setting name.
-
 export default connect(mapStateToProps)(Welcome);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
@@ -114,7 +112,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 50,
-    borderColor: '#0b1633',
+    borderColor: 'transparent',
     borderBottomColor: '#fff',
     color: '#fff',
     borderWidth: 1,
