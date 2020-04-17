@@ -42,6 +42,7 @@ class Welcome extends React.Component {
                 value={this.state.code}
                 keyboardType="numeric"
                 returnKeyType="done"
+                onSubmitEditing={() => this.yearTextInput.focus()}
               />
               <Text style={styles.label}>Évfolyam:</Text>
               <TextInput
@@ -49,8 +50,9 @@ class Welcome extends React.Component {
                 style={styles.textInput}
                 onChangeText={(text) => this.setState({year: text})}
                 value={this.state.year}
-                keyboardType="numeric" // TODO: choose from list
+                keyboardType="numeric"
                 returnKeyType="done"
+                onSubmitEditing={() => this.cityTextInput.focus()}
               />
               <Text style={styles.label}>Város:</Text>
               <TextInput
@@ -61,15 +63,18 @@ class Welcome extends React.Component {
                 keyboardType="default"
                 returnKeyType="done"
                 autoCorrect={false}
+                onSubmitEditing={() => this.schoolTextInput.focus()}
               />
               <Text style={styles.label}>Iskola (nem kötelező):</Text>
               <TextInput
+                ref={(input) => { this.schoolTextInput = input; }}
                 style={styles.textInput}
                 onChangeText={(text) => this.setState({school: text})}
                 value={this.state.school}
                 keyboardType="default"
-                returnKeyType="done"
+                returnKeyType="send"
                 autoCorrect={false}
+                onSubmitEditing={this.connectToEvent.bind(this)}
               />
               <OnlineButton
                 onPress={this.connectToEvent.bind(this)}
