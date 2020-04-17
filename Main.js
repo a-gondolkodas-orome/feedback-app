@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
-import Welcome from './Welcome'
-import Question from './Question'
+import Welcome from './Welcome';
+import Question from './Question';
+import Joke from './Joke';
 import { store } from './reducers';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -53,7 +54,14 @@ class Main extends React.Component {
         </View>
       );
     }
-    let innerComponent = (<Text style={styles.textStyle}>{this.props.noQuestionText}</Text>);
+    let innerComponent = (
+        <View>
+          <Text style={styles.textStyle}>
+            {this.props.noQuestionText}
+          </Text>
+          <Joke />
+        </View>
+      );
     if (this.props.questionToShow != "") {
       innerComponent = (<Question store={store}/>);
     }
@@ -77,8 +85,10 @@ class Main extends React.Component {
           visible={this.props.spinner}
           cancelable={true}
         />
-        {gradient}
-        {innerComponent}
+        <ScrollView style={{alignSelf: 'stretch'}}>
+          {gradient}
+          {innerComponent}
+        </ScrollView>
       </View>
     );
   }

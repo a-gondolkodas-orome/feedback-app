@@ -20,6 +20,11 @@ const initialState = {
   questionToShow: "",
   name: "",
   noQuestionText: strings.INITIAL_TEXT,
+  jokes: {
+    last: {first: "", second: ""},
+    new:  {first: "",  second: ""},
+    collection: {}
+  },
   spinner: false,
 }
 
@@ -80,6 +85,30 @@ export default function feedbackReducer(state = initialState, action) {
     case actions.SHOW_FIRST:
       return Object.assign({}, state, {
         questionToShow: state.firstQuestion
+      });
+
+    case actions.ADD_JOKES:
+      let collection = {};
+      action.jokes.forEach(joke => collection[joke.id] = joke.data);
+      return Object.assign({}, state, {
+        jokes: Object.assign({}, state.jokes, {
+          collection: collection
+        })
+      });
+    
+    case actions.UPDATE_JOKE:
+      let newkey = Object.keys(state.jokes.collection)
+        [Math.floor(Math.random() * Object.keys(state.jokes.collection).length)];
+      let newcoll = {};
+      Object.keys(state.jokes.collection).forEach(key => {
+        if (key != newkey) newcoll[key] = state.jokes.collection[key];
+      })
+      return Object.assign({}, state, {
+        jokes: {
+          last: state.jokes.new,
+          new:  state.jokes.collection[newkey],
+          collection: newcoll
+        }
       });
 
     case actions.SPINNER_ON:

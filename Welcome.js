@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
 import { loadQuestions } from './logic';
+import { loadAllJokes } from './Joke';
 import { store } from './reducers';
 import { setEvent, spinnerOff } from './actions';
 import OnlineButton from './OnlineButton';
@@ -83,6 +84,9 @@ class Welcome extends React.Component {
         // TODO: display error
         store.dispatch(spinnerOff());
     });
+
+    // Load the jokes initially
+    loadAllJokes();
   }
 }
 

@@ -1,5 +1,6 @@
 import * as firebase from 'firebase';
 import '@firebase/firestore';
+import { activateNextJoke } from './Joke';
 import { Notifications } from 'expo';
 import { store } from './reducers';
 import * as actions from './actions'
@@ -47,13 +48,13 @@ export function saveAnswer(questionId, answerObject) {
   db.collection("events").doc(store.getState().event.id).collection("questions")
     .doc(questionId).collection('answers')
     .add(answerObject)
-    .then(function(docRef) {
-        console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
-        handleAnswer(questionId, answerObject);
-    })
     .catch(function(error) {
         console.error("Error adding document: ", error);
         store.dispatch(actions.spinnerOff());
+    })
+    .then(function(docRef) {
+        console.log("Document written with ID: ", docRef.id, " data: ", answerObject);
+        handleAnswer(questionId, answerObject);
     });
 }
 
@@ -62,6 +63,9 @@ function handleAnswer(questionId, answer) {
   if (questionId == store.getState().firstQuestion) {
     Notifications.dismissAllNotificationsAsync();
     scheduleNotification();
+  }
+  if ("" == store.getState().questionToShow) {
+    activateNextJoke();
   }
   store.dispatch(actions.spinnerOff());
 }
