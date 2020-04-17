@@ -85,8 +85,8 @@ class Main extends React.Component {
           visible={this.props.spinner}
           cancelable={true}
         />
-        {gradient}
         <ScrollView style={{alignSelf: 'stretch'}}>
+          {gradient}
           {innerComponent}
         </ScrollView>
       </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     marginTop: 30,
-    fontSize: 20,
+    fontSize: 24,
     color: '#fff',
     textAlign: "center",
     margin: 20,

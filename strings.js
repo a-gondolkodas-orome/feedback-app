@@ -3,6 +3,7 @@
  */
 
 export var INITIAL_TEXT = "";
+export const WELCOME_TEXT = "Arra vagyunk kíváncsiak, hogy milyen az otthoni tanulás.\nEzzel kapcsolatban pár rövid kérdést teszünk fel, amelyeket kb. 2 óránként megismétlünk.";
 export const EVENT_LATER_TEXT = "Még nem kezdődött el az esemény.\nKüldünk értesítést, ha kapsz kitöltendő kérdést.\n" +
   "Most nyugodtan elhagyhatod az applikációt a home gombbal.";
 export const THANK_YOU_TEXT = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 

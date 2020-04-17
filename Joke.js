@@ -40,7 +40,7 @@ function Joke(props) {
     // display last joke in full and first part of next joke
     return (
         <View style={styles.container}>
-          <View style={props.jokes.last.first == "" ? {display: 'none'} : styles.joke}>
+          <View style={Object.assign({}, styles.joke, {display: (props.jokes.last.first == "") ? 'none' : 'block'})}>
             <Text style={styles.textStyle}>
               {props.jokes.last.first}
             </Text>
@@ -48,7 +48,7 @@ function Joke(props) {
               {props.jokes.last.second}
             </Text>
           </View>
-          <View style={props.jokes.new.first == "" ? {display: 'none'} : styles.joke}>
+          <View style={Object.assign({}, styles.joke, {display: (props.jokes.new.first == "") ? 'none' : 'block'})}>
             <Text style={styles.textStyle}>
               {props.jokes.new.first}
             </Text>
@@ -71,7 +71,7 @@ export default connect(mapStateToProps)(Joke);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: '#0b1633',
     color: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
