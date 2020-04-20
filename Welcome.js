@@ -16,9 +16,8 @@ class Welcome extends React.Component {
 
   constructor(props) {
     super(props);
-    // Default value for easier debugging, it should be "" instead.
-    // TODO: connect this instead with the eventCode in the store.
-    this.state = { code: "1111", year: "", city: "", school: "" };
+    // Hardcoded event now.
+    this.state = { code: "0000", year: "", city: "", school: "" };
   }
 
   render() {
@@ -28,26 +27,16 @@ class Welcome extends React.Component {
         style={{flex: 1}}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <ScrollView>
           <View style={styles.container}>
-            <Text style={styles.appNameTextStyle}>Feedback App</Text>
-            <ScrollView>
+            <Text style={styles.appNameTextStyle}>Study Meter</Text>
               <Text style={styles.info}>{WELCOME_TEXT}</Text>
               <Text style={styles.info}>Kérlek add meg a következőket!</Text>
-              <Text style={styles.label}>Esemény kódja:</Text>
-              <TextInput
-                ref={(input) => { this.codeTextInput = input; }}
-                style={styles.textInput}
-                maxLength={5}
-                onChangeText={(text) => this.setState({code: text})}
-                value={this.state.code}
-                keyboardType="numeric"
-                returnKeyType="done"
-                onSubmitEditing={() => this.yearTextInput.focus()}
-              />
               <Text style={styles.label}>Évfolyam:</Text>
               <TextInput
                 ref={(input) => { this.yearTextInput = input; }}
                 style={styles.textInput}
+                maxLength={3}
                 onChangeText={(text) => this.setState({year: text})}
                 value={this.state.year}
                 keyboardType="numeric"
@@ -57,7 +46,7 @@ class Welcome extends React.Component {
               <Text style={styles.label}>Város:</Text>
               <TextInput
                 ref={(input) => { this.cityTextInput = input; }}
-                style={styles.textInput}
+                style={[styles.textInput, {minWidth: 150}]}
                 onChangeText={(text) => this.setState({city: text})}
                 value={this.state.city}
                 keyboardType="default"
@@ -68,7 +57,7 @@ class Welcome extends React.Component {
               <Text style={styles.label}>Iskola (nem kötelező):</Text>
               <TextInput
                 ref={(input) => { this.schoolTextInput = input; }}
-                style={styles.textInput}
+                style={[styles.textInput, {minWidth: 250}]}
                 onChangeText={(text) => this.setState({school: text})}
                 value={this.state.school}
                 keyboardType="default"
@@ -82,8 +71,8 @@ class Welcome extends React.Component {
               >
                 <Text style={{color: "white", fontSize: 24}}>Kapcsolódás</Text>
               </OnlineButton>
-            </ScrollView>
           </View>
+          </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     );
@@ -198,13 +187,13 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   textInput: {
-    height: 50,
+    height: 40,
     borderColor: 'transparent',
     borderBottomColor: '#fff',
     color: '#fff',
     borderWidth: 1,
     fontSize: 28,
-    minWidth: 150,
+    minWidth: 100,
     textAlign: "center",
   },
   connectButton: {
