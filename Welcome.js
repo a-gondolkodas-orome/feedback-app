@@ -139,11 +139,13 @@ class Welcome extends React.Component {
       })
       .then(() => {
         // Register user data only if we entered the event successfully
+        let timestamp = new Date()
         let data = {
           year: parseInt(this.state.year),
           city: this.state.city,
           school: this.state.school,
-          name: store.getState().name
+          name: store.getState().name,
+          timestamp: timestamp
         }
         console.log("registering ...", data)
         return db.collection("users").doc(store.getState().name).set(data)
