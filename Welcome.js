@@ -79,14 +79,14 @@ class Welcome extends React.Component {
   }
 
   connectToEvent() {
-    console.log(this.state);
-    console.log("name:", store.getState().name);
 
+/* not relevant in hardcoded event version
     if (this.state.code == "") {
       this.codeTextInput.focus();
       // TODO: red border
       return;
     }
+ */
 
     if (this.state.year == "") {
       this.yearTextInput.focus();
@@ -133,9 +133,9 @@ class Welcome extends React.Component {
       .catch((error) => {
         // TODO: maybe display error message
         console.log("Error getting event: ", error);
-        welcome.setState({code: ""});
+//        welcome.setState({code: ""});
         store.dispatch(spinnerOff());
-        welcome.codeTextInput.focus();
+//        welcome.codeTextInput.focus();
       })
       .then(() => {
         // Register user data only if we entered the event successfully
