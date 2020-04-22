@@ -22,9 +22,9 @@ export async function registerForNotificationsAsync () {
   }
 
   Notifications.createChannelAndroidAsync(
-    "FeedbackAppNewQuestion",
+    "StudyMeterNewQuestion",
     {
-      name: "Feedback App New Question",
+      name: "Study Meter New Question",
       sound: false,
       vibrate: true,
     });

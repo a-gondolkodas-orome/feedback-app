@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Feedback app",
-    "slug": "feedback-app",
+    "name": "Study Meter",
+    "slug": "study-meter",
     "privacy": "public",
     "platforms": [
       "ios",
@@ -17,6 +17,10 @@
       "backgroundColor": "#0b1633"
     },
     "primaryColor": "#0b1633",
+    "notification": {
+      "icon": "./assets/kisfej96.png",
+      "color": "#0b1633"
+    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -24,11 +28,11 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "hu.agondolkodasorome.feedback",
+      "bundleIdentifier": "hu.agondolkodasorome.studymeter",
       "supportsTablet": true
     },
     "android": {
-      "package": "hu.agondolkodasorome.feedback"
+      "package": "hu.agondolkodasorome.studymeter"
     }
   }
 }

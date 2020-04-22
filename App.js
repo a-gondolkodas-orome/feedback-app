@@ -102,13 +102,18 @@ export default class App extends React.Component {
   };
 
   checkAndShowQuestion(forced) {
-    if (store.getState().event == null) return;
+    if (!store.getState().event) return;
+    let now = new Date();
+    if (now < store.getState().event.data.from.seconds * 1000 ||
+        now.getHours() < store.getState().event.data.morning) {
+      // Event hasn't started, won't show question.
+      return;
+    }
     const firstQuestionData = store.getState().questions[store.getState().firstQuestion];
     if (firstQuestionData == undefined) {
       console.log("Error: can't find first question, won't show anything.");
       return;
     }
-    let now = new Date();
     let elapsedSeconds = (now - firstQuestionData.lastAnswerTime) / 1000;
     console.log("Elapsed: ", elapsedSeconds, "forced: ", forced);
     let frequencySeconds = store.getState().event.data.frequency * 60;

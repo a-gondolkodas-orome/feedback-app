@@ -83,7 +83,6 @@ class Welcome extends React.Component {
 /* not relevant in hardcoded event version
     if (this.state.code == "") {
       this.codeTextInput.focus();
-      // TODO: red border
       return;
     }
  */
@@ -131,11 +130,9 @@ class Welcome extends React.Component {
         loadAllJokes();
       })
       .catch((error) => {
-        // TODO: maybe display error message
+        // TODO: display error message
         console.log("Error getting event: ", error);
-//        welcome.setState({code: ""});
         store.dispatch(spinnerOff());
-//        welcome.codeTextInput.focus();
       })
       .then(() => {
         // Register user data only if we entered the event successfully
