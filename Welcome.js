@@ -171,10 +171,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#fff',
     marginTop: 10,
+    textAlign: "left",
+    width: "100%",
   },
   label: {
     fontSize: 20,
-    marginTop: 10,
+    marginTop: 20,
     color: '#d3d3d3',
     textAlign: "center"
   },

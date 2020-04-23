@@ -10,9 +10,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/kisfej1024.png",
+    "icon": "./assets/kisfej512.png",
     "splash": {
-      "image": "./assets/kisfej.png",
+      "image": "./assets/kisfej512_transparent.png",
       "resizeMode": "contain",
       "backgroundColor": "#0b1633"
     },
