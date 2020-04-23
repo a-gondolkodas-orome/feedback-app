@@ -101,7 +101,7 @@ function scheduleNotification() {
       title: strings.NOTIFICATION_TITLE,
       body: strings.NOTIFICATION_TEXT,
       ios: { sound: false },
-      android: { channelId: "StudyMeterNewQuestion", icon: "./assets/kisfej96.png" }
+      android: { channelId: "StudyMeterNewQuestion", icon: "./assets/kisfej96bw.png" }
     },
     {
       time: scheduleFor,

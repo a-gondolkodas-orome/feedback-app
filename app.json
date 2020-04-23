@@ -10,7 +10,7 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/kisfej.png",
+    "icon": "./assets/kisfej1024.png",
     "splash": {
       "image": "./assets/kisfej.png",
       "resizeMode": "contain",
@@ -18,7 +18,7 @@
     },
     "primaryColor": "#0b1633",
     "notification": {
-      "icon": "./assets/kisfej96.png",
+      "icon": "./assets/kisfej96bw.png",
       "color": "#0b1633"
     },
     "updates": {
@@ -32,7 +32,11 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "hu.agondolkodasorome.studymeter"
+      "package": "hu.agondolkodasorome.studymeter",
+      "permissions": [
+        "VIBRATE"
+      ],
+      "googleServicesFile": "./google-services.json"
     }
   }
 }
