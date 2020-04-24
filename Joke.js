@@ -57,6 +57,13 @@ class Joke extends React.Component {
     setTimeout(() => this.props.scrollDown(), 0);
   }
 
+  hideInfo = () => {
+    // Scroll up smoothly
+    this.props.scrollUp();
+    // and hide WebView
+    setTimeout(() => store.dispatch(actions.setJokeInfo("")), 200)
+  }
+
   render() {
     // display last joke in full and first part of next joke
     return (
@@ -95,8 +102,8 @@ class Joke extends React.Component {
         <View style={this.props.jokeInfo == "" ? {display: 'none'} : {}}>
           <Text
             style={styles.scrollUpButtonStyle}
-            onPress={() => this.props.scrollUp()}>
-              Fel
+            onPress={this.hideInfo}>
+              Elrejt
             </Text>
           <WebView
            source = {{ uri: this.props.jokeInfo == "csacsi-pacsi" ?
