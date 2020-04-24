@@ -25,6 +25,7 @@ const initialState = {
     new:  {first: "",  second: ""},
     collection: {}
   },
+  jokeInfo: "", // either of "", "csacsi-pacsi", "Rosszul összetett szavak"
   spinner: false,
 }
 
@@ -109,6 +110,11 @@ export default function feedbackReducer(state = initialState, action) {
           new:  state.jokes.collection[newkey],
           collection: newcoll
         }
+      });
+
+    case actions.SET_JOKE_INFO:
+      return Object.assign({}, state, {
+        jokeInfo: action.info
       });
 
     case actions.SPINNER_ON:

@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { WebView } from 'react-native-webview';
+import ParsedText from 'react-native-parsed-text';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
 import '@firebase/firestore';
@@ -36,33 +38,78 @@ export function activateNextJoke() {
   }
 }
 
-function Joke(props) {
+function isCsacsiPacsi(description) {
+  return description.startsWith('csacsi-pacsi')
+}
+
+function isRosszulOsszetett(description) {
+  return description.startsWith('rosszul összetett szavak')
+}
+
+
+class Joke extends React.Component {
+
+  constructor(props) {
+    super(props)
+  }
+
+  showInfo = (info, matchIndex) => {
+    store.dispatch(actions.setJokeInfo(info))
+    this.props.scrollDown()
+  }
+
+  render() {
     // display last joke in full and first part of next joke
     return (
+        <View>
         <View style={styles.container}>
-          <View style={props.jokes.last.first == "" ? {display: 'none'} : styles.joke}>
-            <Text style={styles.textStyle}>
-              {props.jokes.last.first}
-            </Text>
+          <View style={this.props.jokes.last.first == "" ? {display: 'none'} : styles.joke}>
+            <ParsedText
+              style={styles.textStyle}
+              parse={[{
+                pattern: /^(csacsi-pacsi)|^(Rosszul összetett szavak)/,
+                style: styles.infoWord,
+                onPress: this.showInfo
+              }]}
+              >
+                {this.props.jokes.last.first}
+              </ParsedText>
             <Text style={styles.displaySecondPartStyle}>
-              {props.jokes.last.second}
-            </Text>
+                {this.props.jokes.last.second}
+              </Text>
           </View>
-          <View style={props.jokes.new.first == "" ? {display: 'none'} : styles.joke}>
-            <Text style={styles.textStyle}>
-              {props.jokes.new.first}
-            </Text>
+          <View style={this.props.jokes.new.first == "" ? {display: 'none'} : styles.joke}>
+            <ParsedText
+              style={styles.textStyle}
+              parse={[{
+                pattern: /^(csacsi-pacsi)|^(Rosszul összetett szavak)/,
+                style: styles.infoWord,
+                onPress: this.showInfo
+              }]}>
+                {this.props.jokes.new.first}
+              </ParsedText>
             <Text style={styles.missingSecondPartStyle}>
               ???
             </Text>
           </View>
         </View>
+        <View>
+          <WebView
+           source = {{ uri: this.props.jokeInfo == "csacsi-pacsi" ?
+            'https://hu.wikipedia.org/wiki/Csacsipacsi'
+          : 'https://hu.wikipedia.org/wiki/Rosszul_összetett_szavak' }}
+           style={this.props.jokeInfo == "" ? {display: 'none'} : styles.webViewStyle}
+           />
+          </View>
+        </View>
       );
+  }
 }
 
 const mapStateToProps = state => ({ 
   spinner: state.spinner,
   jokes: state.jokes,
+  jokeInfo: state.jokeInfo
 });
 
 export default connect(mapStateToProps)(Joke);
@@ -103,5 +150,13 @@ const styles = StyleSheet.create({
     color: '#00ff00',
     textAlign: "center",
     margin: 20,
+  },
+  webViewStyle: {
+    height: 500,
+    marginTop: 20
+  },
+  infoWord: {
+    color: '#0645AD',
+    textDecorationLine: 'underline'
   }
 });

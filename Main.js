@@ -8,7 +8,7 @@ import Joke from './Joke';
 import { store } from './reducers';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { leaveEvent } from './actions';
+import { leaveEvent, updateJoke } from './actions';
 import * as strings from './strings';
 
 class Main extends React.Component {
@@ -33,6 +33,10 @@ class Main extends React.Component {
   showMenu = () => {
     this._menu.show();
   };
+
+  scrollDown = () => {
+    this.scrollView.scrollToEnd({animated: true})
+  }
 
   render() {
     const gradient = (<LinearGradient
@@ -59,7 +63,7 @@ class Main extends React.Component {
           <Text style={styles.textStyle}>
             {this.props.noQuestionText}
           </Text>
-          <Joke />
+          <Joke scrollDown={this.scrollDown}/>
         </View>
       );
     if (this.props.questionToShow != "") {
@@ -78,6 +82,9 @@ class Main extends React.Component {
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 {strings.EXIT_TEXT}
               </MenuItem>
+              <MenuItem onPress={() => store.dispatch(updateJoke())}>
+                "DEV: UPDATE JOKE"
+              </MenuItem>
             </Menu>
           </View>
         </View>
@@ -86,9 +93,11 @@ class Main extends React.Component {
           cancelable={true}
         />
         {gradient}
-        <ScrollView style={{alignSelf: 'stretch'}}>
-          {innerComponent}
-        </ScrollView>
+        <ScrollView
+          style={{alignSelf: 'stretch'}}
+          ref={(view) => {this.scrollView = view}}>
+            {innerComponent}
+          </ScrollView>
       </View>
     );
   }
