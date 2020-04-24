@@ -88,7 +88,7 @@ class Joke extends React.Component {
             <ParsedText
               style={styles.textStyle}
               parse={[{
-                pattern: /^(csacsi-pacsi)|^(Rosszul összetett szavak)/,
+                pattern: /^(csacsi-pacsi)|^(rosszul összetett szavak)/,
                 style: styles.infoWord,
                 onPress: this.showInfo
               }]}>
