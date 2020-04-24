@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import Welcome from './Welcome';
 import Question from './Question';
-import Joke from './Joke';
+import Joke, { activateNextJoke } from './Joke';
 import { store } from './reducers';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -34,6 +34,14 @@ class Main extends React.Component {
     this._menu.show();
   };
 
+  scrollDown = () => {
+    this.scrollView.scrollToEnd({animated: true});
+  }
+
+  scrollUp = () => {
+    this.scrollView.scrollTo({x: 0, y: 0, animated: true});
+  }
+
   render() {
     const gradient = (<LinearGradient
       colors={['transparent', 'rgba(39,76,177,0.6)']}
@@ -59,7 +67,7 @@ class Main extends React.Component {
           <Text style={styles.textStyle}>
             {this.props.noQuestionText}
           </Text>
-          <Joke />
+          <Joke scrollDown={this.scrollDown} scrollUp={this.scrollUp}/>
         </View>
       );
     if (this.props.questionToShow != "") {
@@ -78,6 +86,9 @@ class Main extends React.Component {
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 {strings.EXIT_TEXT}
               </MenuItem>
+              <MenuItem onPress={() => activateNextJoke()}>
+                DEV: UPDATE JOKE
+              </MenuItem>
             </Menu>
           </View>
         </View>
@@ -86,9 +97,11 @@ class Main extends React.Component {
           cancelable={true}
         />
         {gradient}
-        <ScrollView style={{alignSelf: 'stretch'}}>
-          {innerComponent}
-        </ScrollView>
+        <ScrollView
+          style={{alignSelf: 'stretch'}}
+          ref={(view) => {this.scrollView = view}}>
+            {innerComponent}
+          </ScrollView>
       </View>
     );
   }
