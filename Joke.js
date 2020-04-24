@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
+import AutoHeightWebView from 'react-native-autoheight-webview';
 import ParsedText from 'react-native-parsed-text';
 import { connect } from 'react-redux';
 import * as firebase from 'firebase';
@@ -54,12 +55,12 @@ class Joke extends React.Component {
   showInfo = (info, matchIndex) => {
     store.dispatch(actions.setJokeInfo(info))
     // Scroll down -- for some reason this waits for render to complete
-    setTimeout(() => this.props.scrollDown(), 0);
+    setTimeout(() => this.props.scrollTo(this.wikiPosition), 100)
   }
 
   hideInfo = () => {
     // Scroll up smoothly
-    this.props.scrollUp();
+    this.props.scrollTo(0);
     // and hide WebView
     setTimeout(() => store.dispatch(actions.setJokeInfo("")), 200)
   }
@@ -99,17 +100,19 @@ class Joke extends React.Component {
             </Text>
           </View>
         </View>
-        <View style={this.props.jokeInfo == "" ? {display: 'none'} : {}}>
+        <View
+          style={this.props.jokeInfo == "" ? {display: 'none'} : {}}
+          onLayout={event => this.wikiPosition = event.nativeEvent.layout.y}>
           <Text
             style={styles.scrollUpButtonStyle}
             onPress={this.hideInfo}>
               Elrejt
             </Text>
-          <WebView
+          <AutoHeightWebView
            source = {{ uri: this.props.jokeInfo == "csacsi-pacsi" ?
-            'https://hu.wikipedia.org/wiki/Csacsipacsi'
-          : 'https://hu.wikipedia.org/wiki/Rosszul_összetett_szavak' }}
-           style={styles.webViewStyle}
+                'https://hu.wikipedia.org/wiki/Csacsipacsi'
+              : 'https://hu.wikipedia.org/wiki/Rosszul_összetett_szavak'
+            }}
            />
           </View>
         </View>
@@ -161,9 +164,6 @@ const styles = StyleSheet.create({
     color: '#00ff00',
     textAlign: "center",
     margin: 20,
-  },
-  webViewStyle: {
-    height: Dimensions.get('screen').height - 150,
   },
   infoWord: {
     color: '#0645AD',

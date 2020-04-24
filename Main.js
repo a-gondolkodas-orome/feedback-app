@@ -34,12 +34,8 @@ class Main extends React.Component {
     this._menu.show();
   };
 
-  scrollDown = () => {
-    this.scrollView.scrollToEnd({animated: true});
-  }
-
-  scrollUp = () => {
-    this.scrollView.scrollTo({x: 0, y: 0, animated: true});
+  scrollTo = (y) => {
+    this.scrollView.scrollTo({y: y, animated: true});
   }
 
   render() {
@@ -67,7 +63,7 @@ class Main extends React.Component {
           <Text style={styles.textStyle}>
             {this.props.noQuestionText}
           </Text>
-          <Joke scrollDown={this.scrollDown} scrollUp={this.scrollUp}/>
+          <Joke scrollTo={this.scrollTo}/>
         </View>
       );
     if (this.props.questionToShow != "") {
