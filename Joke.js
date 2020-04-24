@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 import ParsedText from 'react-native-parsed-text';
 import { connect } from 'react-redux';
@@ -9,9 +9,11 @@ import { store } from './reducers';
 import * as actions from './actions';
 
 /* jokes: entry of the last, the new joke (with first half displayed)
+ * jokeInfo: which description is visible in the WebView
  * and the colleciton of remaining jokes
  * ADD_JOKES: adds an array of jokes into `jokes.collection'
  * UPDATE_JOKE: loads the next joke to display into `jokes'
+ * SET_JOKE_INFO: jokeInfo setter
  */
 
 export function loadAllJokes() {
@@ -32,18 +34,14 @@ export function loadAllJokes() {
 
 export function activateNextJoke() {
   console.log("activating next joke");
+  // Reset jokeInfo
+  store.dispatch(actions.setJokeInfo(""));
+  // Update joke
   store.dispatch(actions.updateJoke());
+  // If no more jokes, load them again
   if (Object.keys(store.getState().jokes.collection).length == 0) {
     loadAllJokes();
   }
-}
-
-function isCsacsiPacsi(description) {
-  return description.startsWith('csacsi-pacsi')
-}
-
-function isRosszulOsszetett(description) {
-  return description.startsWith('rosszul összetett szavak')
 }
 
 
@@ -55,7 +53,8 @@ class Joke extends React.Component {
 
   showInfo = (info, matchIndex) => {
     store.dispatch(actions.setJokeInfo(info))
-    this.props.scrollDown()
+    // Scroll down -- for some reason this waits for render to complete
+    setTimeout(() => this.props.scrollDown(), 0);
   }
 
   render() {
@@ -93,12 +92,17 @@ class Joke extends React.Component {
             </Text>
           </View>
         </View>
-        <View>
+        <View style={this.props.jokeInfo == "" ? {display: 'none'} : {}}>
+          <Text
+            style={styles.scrollUpButtonStyle}
+            onPress={() => this.props.scrollUp()}>
+              Fel
+            </Text>
           <WebView
            source = {{ uri: this.props.jokeInfo == "csacsi-pacsi" ?
             'https://hu.wikipedia.org/wiki/Csacsipacsi'
           : 'https://hu.wikipedia.org/wiki/Rosszul_összetett_szavak' }}
-           style={this.props.jokeInfo == "" ? {display: 'none'} : styles.webViewStyle}
+           style={styles.webViewStyle}
            />
           </View>
         </View>
@@ -152,11 +156,17 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   webViewStyle: {
-    height: 500,
-    marginTop: 20
+    height: Dimensions.get('screen').height - 150,
   },
   infoWord: {
     color: '#0645AD',
     textDecorationLine: 'underline'
+  },
+  scrollUpButtonStyle: {
+    textAlign: "left",
+    fontSize: 18,
+    color: '#b3b3b3',
+    padding: 15,
+    marginTop: 10
   }
 });

@@ -4,11 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import Welcome from './Welcome';
 import Question from './Question';
-import Joke from './Joke';
+import Joke, { activateNextJoke } from './Joke';
 import { store } from './reducers';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';
-import { leaveEvent, updateJoke } from './actions';
+import { leaveEvent } from './actions';
 import * as strings from './strings';
 
 class Main extends React.Component {
@@ -35,7 +35,11 @@ class Main extends React.Component {
   };
 
   scrollDown = () => {
-    this.scrollView.scrollToEnd({animated: true})
+    this.scrollView.scrollToEnd({animated: true});
+  }
+
+  scrollUp = () => {
+    this.scrollView.scrollTo({x: 0, y: 0, animated: true});
   }
 
   render() {
@@ -63,7 +67,7 @@ class Main extends React.Component {
           <Text style={styles.textStyle}>
             {this.props.noQuestionText}
           </Text>
-          <Joke scrollDown={this.scrollDown}/>
+          <Joke scrollDown={this.scrollDown} scrollUp={this.scrollUp}/>
         </View>
       );
     if (this.props.questionToShow != "") {
@@ -82,8 +86,8 @@ class Main extends React.Component {
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 {strings.EXIT_TEXT}
               </MenuItem>
-              <MenuItem onPress={() => store.dispatch(updateJoke())}>
-                "DEV: UPDATE JOKE"
+              <MenuItem onPress={() => activateNextJoke()}>
+                DEV: UPDATE JOKE
               </MenuItem>
             </Menu>
           </View>
