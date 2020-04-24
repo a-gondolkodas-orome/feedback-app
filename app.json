@@ -35,8 +35,7 @@
       "package": "hu.agondolkodasorome.studymeter",
       "permissions": [
         "VIBRATE"
-      ],
-      "googleServicesFile": "./google-services.json"
+      ]
     }
   }
 }
