@@ -7,7 +7,7 @@ export const WELCOME_TEXT = "Arra vagyunk kíváncsiak, hogy milyen az otthoni t
 export const EVENT_LATER_TEXT = "Még nem kezdődött el az esemény.\nKüldünk értesítést, ha kapsz kitöltendő kérdést.\n" +
   "Most nyugodtan elhagyhatod az applikációt a home gombbal.";
 export const THANK_YOU_TEXT = "Köszönjük eddigi válaszaidat.\nKésőbb majd küldünk értesítést, " + 
-  "ha kapsz kitöltendő kérdést.\n" + "Addig is itt van egy vicc első fele, megkapod a megfejtést ha legközelebb válaszolsz.";
+  "ha kapsz kitöltendő kérdést.\n" + "Addig is itt van egy szójáték első fele, megkapod a megfejtést ha legközelebb válaszolsz.";
 export const EVENT_ENDED_TEXT = "Köszönjük a részvételt és a válaszaidat! :) Most már nem küldünk több értesítést.";
 export const OFFLINE_TEXT = "Úgy tűnik, nincs internetkapcsolatod. Kérlek, csatlakoztasd készüléked az internethez, és próbáld újra!";
 export const UNKOWN_QUESTION = "Ismeretlen kérdéstípus";
