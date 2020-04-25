@@ -78,7 +78,7 @@ export default function feedbackReducer(state = initialState, action) {
       newState.questions[action.questionId].lastAnswerTime = action.answer.timestamp;
       if (newState.questions[action.questionId].answerCount == 1) {
         newState.questions[action.questionId].firstAnswerTime = action.answer.timestamp;
-        newState.noQuestionText = strings.THANK_YOU_TEXT;
+        if (action.questionId == state.firstQuestion) newState.noQuestionText = strings.THANK_YOU_TEXT;
       }
       newState.questionToShow = state.questions[state.questionToShow].next;
       return newState;

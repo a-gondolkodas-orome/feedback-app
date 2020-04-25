@@ -79,6 +79,8 @@ function scheduleNotification() {
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
   // Check that we don't schedule after the end of event.
   if (event.until && scheduleFor > event.until.seconds * 1000) {
+    logTime(now, scheduleFor);
+    console.log("No notification. Schedule time is past the end of the event: ", new Date(scheduleFor));
     // TODO: actions.endEvent()
     store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
     return;
@@ -87,6 +89,8 @@ function scheduleNotification() {
   const firstQuestion = store.getState().questions[store.getState().firstQuestion];
   if (firstQuestion && firstQuestion.answerCount > 0 && event.duration &&
       scheduleFor > firstQuestion.firstAnswerTime.getTime() + event.duration * 3600 * 1000) {
+    logTime(now, scheduleFor);
+    console.log("No notification. Schedule time is after the max duration of the event: ", new Date(scheduleFor));
     // TODO: actions.endEvent()
     store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
     return;
