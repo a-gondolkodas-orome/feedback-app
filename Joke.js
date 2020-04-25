@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   infoWord: {
-    color: '#0645AD',
+    color: '#08c4dd',
     textDecorationLine: 'underline'
   },
   scrollUpButtonStyle: {
