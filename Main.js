@@ -82,9 +82,6 @@ class Main extends React.Component {
               <MenuItem onPress={() => store.dispatch(leaveEvent())}>
                 {strings.EXIT_TEXT}
               </MenuItem>
-              <MenuItem onPress={() => activateNextJoke()}>
-                DEV: UPDATE JOKE
-              </MenuItem>
             </Menu>
           </View>
         </View>
