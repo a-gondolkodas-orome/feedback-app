@@ -79,27 +79,31 @@ function scheduleNotification() {
   scheduleFor = now + Math.floor(freq * (0.85 + 0.2 * Math.random())); // 85% +- 10%, because it takes time to answer questions
   // Check that we don't schedule after the end of event.
   if (event.until && scheduleFor > event.until.seconds * 1000) {
-    logTime(now, scheduleFor);
-    console.log("No notification. Schedule time is past the end of the event: ", new Date(scheduleFor));
-    // TODO: actions.endEvent()
-    store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
+    logTime(now, scheduleFor, "No notification. Schedule time is past the end of the event");
+    store.dispatch(actions.endEvent());
     return;
   }
   // Check that we don't schedule after the max duration of the event.
   const firstQuestion = store.getState().questions[store.getState().firstQuestion];
   if (firstQuestion && firstQuestion.answerCount > 0 && event.duration &&
       scheduleFor > firstQuestion.firstAnswerTime.getTime() + event.duration * 3600 * 1000) {
-    logTime(now, scheduleFor);
-    console.log("No notification. Schedule time is after the max duration of the event: ", new Date(scheduleFor));
-    // TODO: actions.endEvent()
-    store.dispatch(actions.changeText(strings.EVENT_ENDED_TEXT));
+    logTime(now, scheduleFor, "No notification. Schedule time is after the max duration of the event");
+    store.dispatch(actions.endEvent());
     return;
   }
-  if (scheduleFor < event.from.seconds * 1000) {
+  if (now < event.from.seconds * 1000) {
     scheduleFor = event.from.seconds * 1000 + Math.floor(120 * 1000 * Math.random()); // Random time within 2 minutes after start.
   }
+  
   scheduleFor = adjustScheduleTime(scheduleFor, event);
-  logTime(now, scheduleFor);
+
+  if (scheduleFor > event.until.seconds * 1000) {
+    logTime(now, scheduleFor, "No notification. Schedule time is past the end of the event");
+    store.dispatch(actions.endEvent());
+    return;
+  }
+
+  logTime(now, scheduleFor, "");
 
   Notifications.scheduleLocalNotificationAsync({
       title: strings.NOTIFICATION_TITLE,
@@ -129,9 +133,10 @@ function adjustScheduleTime(scheduleTime, event) {
   return scheduleTime;
 }
 
-function logTime(now, scheduleFor) {
+function logTime(now, scheduleFor, message) {
   let dateNow = new Date(now);
   let dateSchedule = new Date(scheduleFor);
   console.log("Now: ", dateNow.getHours(), dateNow.getMinutes(), dateNow.getSeconds());
   console.log("Schedule: ", dateSchedule.getHours(), dateSchedule.getMinutes(), dateSchedule.getSeconds());
+  console.log(message);
 }

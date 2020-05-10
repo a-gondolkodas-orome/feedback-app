@@ -8,6 +8,7 @@ export const CLEAR_QUESTIONS = 'CLEAR_QUESTIONS'
 export const ADD_QUESTION = 'ADD_QUESTION'
 export const ADD_ANSWER = 'ADD_ANSWER'
 export const SHOW_FIRST = 'SHOW_FIRST'
+export const END_EVENT = 'END_EVENT'
 export const CHANGE_TEXT = 'CHANGE_TEXT'
 export const ADD_JOKES = 'ADD_JOKES'
 export const UPDATE_JOKE = 'UPDATE_JOKE'
@@ -47,6 +48,10 @@ export function changeText(text) {
 
 export function showFirst() {
   return { type: SHOW_FIRST }
+}
+
+export function endEvent() {
+  return { type: END_EVENT }
 }
 
 export function addJokes(jokes) {

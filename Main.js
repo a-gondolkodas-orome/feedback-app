@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { connect } from 'react-redux';
 import Welcome from './Welcome';
 import Question from './Question';
-import Joke, { activateNextJoke } from './Joke';
+import Joke from './Joke';
 import { store } from './reducers';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import Spinner from 'react-native-loading-spinner-overlay';

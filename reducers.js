@@ -9,6 +9,7 @@ import * as strings from './strings';
 const initialState = {
   eventCode: "",
   event: null, // will be like this: { data: { name: "Asd", code: XYZW, frequency: <minutes>, from: <Date>, until: <Date> }, },
+  eventEnded: false,
   questions: {}, // map from question id to question data like this: 
                  // { id: "...",
                  //   data: <data in firestore>,
@@ -51,6 +52,12 @@ export default function feedbackReducer(state = initialState, action) {
     case actions.CHANGE_TEXT:
       return Object.assign({}, state, {
         noQuestionText: action.text
+      });
+
+    case actions.END_EVENT:
+      return Object.assign({}, state, {
+        noQuestionText: strings.EVENT_ENDED_TEXT,
+        eventEnded: true
       });
 
     case actions.ADD_QUESTION:
@@ -107,7 +114,7 @@ export default function feedbackReducer(state = initialState, action) {
       return Object.assign({}, state, {
         jokes: {
           last: state.jokes.new,
-          new:  state.jokes.collection[newkey],
+          new:  state.eventEnded ? {first: "", second: ""} : state.jokes.collection[newkey],
           collection: newcoll
         }
       });

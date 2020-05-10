@@ -8,7 +8,7 @@ import { PersistGate } from 'redux-persist/lib/integration/react';
 import { persistor, store } from './reducers'
 import { Notifications } from 'expo';
 import { registerForNotificationsAsync } from './notif';
-import { showFirst, setName } from './actions';
+import * as actions from './actions'
 import GoogleServices from './google-services.json';
 
 // The following code is just to disable some annoying warnings in expo.
@@ -43,7 +43,7 @@ firebase.auth().onAuthStateChanged(function(user) {
   if (user) {
     console.log("Sign in:", user.uid);
     // User is signed in.
-    store.dispatch(setName(user.uid));
+    store.dispatch(actions.setName(user.uid));
   } else {
     // User is signed out.
     console.log("Sign out:", user);
@@ -104,11 +104,20 @@ export default class App extends React.Component {
   checkAndShowQuestion(forced) {
     if (!store.getState().event) return;
     let now = new Date();
-    if (now < store.getState().event.data.from.seconds * 1000 ||
-        now.getHours() < store.getState().event.data.morning) {
+    const event = store.getState().event.data;
+    if (now.getTime() < event.from.seconds * 1000 ||
+        now.getHours() < event.morning) {
       // Event hasn't started, won't show question.
       return;
     }
+    // Check that we are after the end of event.
+    if (now.getTime() > event.until.seconds * 1000) {
+      store.dispatch(actions.endEvent());
+      Notifications.dismissAllNotificationsAsync();
+      Notifications.cancelAllScheduledNotificationsAsync();
+      return;
+    }
+  
     const firstQuestionData = store.getState().questions[store.getState().firstQuestion];
     if (firstQuestionData == undefined) {
       console.log("Error: can't find first question, won't show anything.");
@@ -118,7 +127,7 @@ export default class App extends React.Component {
     console.log("Elapsed: ", elapsedSeconds, "forced: ", forced);
     let frequencySeconds = store.getState().event.data.frequency * 60;
     if (forced || store.getState().questionToShow != firstQuestionData.id && elapsedSeconds > 0.75 * frequencySeconds) {
-      store.dispatch(showFirst());
+      store.dispatch(actions.showFirst());
     }
   }
 
